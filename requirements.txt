@@ -1,0 +1,5 @@
+gspread
+oauth2client
+pandas
+paddlepaddle
+paddleocr>=2.0.1

@@ -1,0 +1,36 @@
+#:import MainScreen screens
+
+
+<MainScreen>
+    name: 'main_screen'
+
+    table: table_screen
+
+    MDFloatLayout:
+
+        MDBoxLayout:
+            orientation: 'vertical'
+
+            MDBoxLayout:
+                adaptive_height: True
+
+                MDRaisedButton:
+                    text: "Start"
+                    md_bg_color: "green" if not self.disabled else 'red'
+                    size_hint_x: 1
+                    disabled: False
+                    on_release:
+                        root.start()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                size_hint_y: .8
+
+                MDData:
+                    id: table_screen
+
+
+
+
+
+
