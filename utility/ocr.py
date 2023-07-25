@@ -1,22 +1,17 @@
 import os
 import datetime
 from time import time
-from utility.google_sheet import GoogleSheet
 import pandas as pd
 from paddleocr import PaddleOCR
 import re
 import copy
-from kivymd.app import MDApp
 
 
 class Ocr:
     path = '/home/sunprizrak/Изображения/vladimir'
 
-    def __init__(self, *args, **kwargs):
-        #self.ocr = PaddleOCR(use_angle_cls=True, show_log=False)
+    def __init__(self):
         self.data = []
-        self.gs = GoogleSheet()
-        self.app = MDApp.get_running_app()
 
     @staticmethod
     def reform(data: list):
@@ -97,41 +92,38 @@ class Ocr:
         res.append(date)
         return res
 
-    def add_screen_table(self, data):
-        screen = self.app.root.get_screen(self.app.root.current)
-        screen.table.add_row(data=data)
-
-    def __call__(self, *args, **kwargs):
+    def main(self):
         os.chdir(path=self.path)
         dir_list = os.listdir(path=self.path)
+        setattr(self, 'ocr', PaddleOCR(use_angle_cls=True, show_log=False))
 
-        # for el in dir_list:
-        #     image_data = self.ocr.ocr(el)
-        #     reform_data = self.reform(data=image_data)
-        #     print(reform_data)
-        #
-        #     if self.data:
-        #
-        #         for i, elem in enumerate(self.data):
-        #             if elem[1] == reform_data[1]:
-        #                 self.data.remove(self.data[i])
-        #                 break
+        for el in dir_list:
+            image_data = getattr(self, 'ocr').ocr(el)
+            reform_data = self.reform(image_data)
 
-        for el in range(1000):
-            reform_data = ['Naatu Naatu', '8514819', 'Gulliver', '43', '21', '7', '46', '8,028', '19/07/2023']
+            if self.data:
+
+                for i, elem in enumerate(self.data):
+                    if elem[1] == reform_data[1]:
+                        self.data.remove(self.data[i])
+                        break
 
             self.data.append(reform_data)
-            self.add_screen_table(data=reform_data)
+            print(reform_data)
 
-        # columns = ['Username', 'ID', 'Club', 'VPIP', 'PFR', '3-Bet', 'C-Bet', 'Total_Hands', 'Date']
-
-        # df = pd.DataFrame(self.data, index=range(1, len(self.data)+1), columns=columns)
-        # #pd.set_option('display.max_rows', None)
-        # pd.set_option('display.max_columns', None)
-        # print(df)
+    def __call__(self, *args, **kwargs):
+        self.main()
+        return self.data
 
 
 if __name__ == '__main__':
     start = time()
-    Ocr()()
+    ocr = Ocr()
+    ocr()
     print(f"Время затраченное на работу: {time() - start}")
+    # columns = ['Username', 'ID', 'Club', 'VPIP', 'PFR', '3-Bet', 'C-Bet', 'Total_Hands', 'Date']
+
+    # df = pd.DataFrame(self.data, index=range(1, len(self.data)+1), columns=columns)
+    # #pd.set_option('display.max_rows', None)
+    # pd.set_option('display.max_columns', None)
+    # print(df)

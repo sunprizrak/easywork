@@ -1,33 +1,64 @@
 #:import MainScreen screens
+#:import Window kivy.core.window.Window
 
 
 <MainScreen>
     name: 'main_screen'
 
     table: table_screen
+    max_width: dp(1220)
 
     MDFloatLayout:
 
+
+        MDTopAppBar:
+            id: top_bar
+            type_height: 'small'
+            md_bg_color: root.md_bg_color
+            left_action_items: [['cog', lambda x: root.open_settings()]]
+            pos_hint: {'top': 1}
+            elevation: 0
+
         MDBoxLayout:
-            orientation: 'vertical'
+            id: table_box
+            padding: [dp(10), 0, dp(10), 0] if Window.width < root.max_width else [dp(10), 0, dp(10), dp(10)]
+            size_hint_x: None if Window.width >= root.max_width else 1
+            width: root.max_width if Window.width >= root.max_width else self.width
+            size_hint_y: None
+            height: Window.height - top_bar.height - buttons.height if Window.width < root.max_width else Window.height - top_bar.height
+            pos_hint: {'center_y': .5} if Window.width < root.max_width else {'y': 0}
 
-            MDBoxLayout:
-                adaptive_height: True
+            MDData:
+                id: table_screen
 
-                MDRaisedButton:
-                    text: "Start"
-                    md_bg_color: "green" if not self.disabled else 'red'
-                    size_hint_x: 1
-                    disabled: False
-                    on_release:
-                        root.start()
+        MDBoxLayout:
+            id: buttons
+            adaptive_height: True
+            padding: dp(10)
+            spacing: dp(30)
+            size_hint_x: None if Window.width >= root.max_width else 1
+            width: Window.width - table_box.width if Window.width >= root.max_width else self.width
+            pos_hint: {'x': 0} if Window.width < root.max_width else {'right': 1}
 
-            MDBoxLayout:
-                orientation: "vertical"
-                size_hint_y: .8
 
-                MDData:
-                    id: table_screen
+
+            MDRaisedButton:
+                id: button_start
+                text: "Start"
+                md_bg_color: "green"
+                size_hint_x: .5
+                disabled: False
+                on_release:
+                    root.start(self)
+
+            MDRaisedButton:
+                text: "Push To Google Sheet"
+                md_bg_color: "blue"
+                size_hint_x: .5
+                disabled: False if table_screen.data_tables.row_data else True
+                on_release:
+
+
 
 
 

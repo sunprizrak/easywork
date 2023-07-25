@@ -1,0 +1,65 @@
+#:import SettingsScreen screens
+#:import Window kivy.core.window.Window
+
+<SettingsScreen>
+    name: 'settings_screen'
+    md_bg_color: app.theme_cls.bg_light
+
+    MDFloatLayout:
+
+        MDTopAppBar:
+            id: top_bar
+            md_bg_color: root.md_bg_color
+            left_action_items: [['home', lambda x: root.open_main_screen()]]
+            pos_hint: {'top': 1}
+            elevation: 0
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: dp(10)
+            size_hint_y: None
+            height: Window.height - top_bar.height
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(10)
+                padding: [dp(30), 0, 0, 0]
+                adaptive_height: True
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    spacing: dp(10)
+                    adaptive_height: True
+
+                    MDLabel:
+                        text: 'API Key Google Sheet'
+                        adaptive_width: True
+
+                    MDIconButton:
+                        icon: "paperclip"
+                        theme_text_color: "Custom"
+                        color: 'white'
+                        on_release:
+                            root.file_manager_open()
+
+                    MDLabel:
+                        id: path_google_sheet
+                        adaptive_width: True
+
+            MDWidget:
+
+            MDRaisedButton:
+                text: "Save"
+                md_bg_color: "green"
+                size_hint_x: .3
+                pos_hint: {'center_x': .5}
+                on_release:
+                    root.save()
+
+        MDIcon:
+            icon: 'cog'
+            font_size: sp(200)
+            theme_text_color: 'Custom'
+            text_color: '#60675B'
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            opacity: .4
