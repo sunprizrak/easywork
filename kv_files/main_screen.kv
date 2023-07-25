@@ -15,7 +15,7 @@
             id: top_bar
             type_height: 'small'
             md_bg_color: root.md_bg_color
-            left_action_items: [['cog', lambda x: root.open_settings()]]
+            left_action_items: [['cog', lambda x: root.open_settings()], ['image-plus', ]]
             pos_hint: {'top': 1}
             elevation: 0
 
@@ -39,8 +39,6 @@
             size_hint_x: None if Window.width >= root.max_width else 1
             width: Window.width - table_box.width if Window.width >= root.max_width else self.width
             pos_hint: {'x': 0} if Window.width < root.max_width else {'right': 1}
-
-
 
             MDRaisedButton:
                 id: button_start

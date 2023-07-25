@@ -1,4 +1,3 @@
-from kivy.clock import mainthread
 from kivy.metrics import dp
 from kivymd.app import MDApp
 from kivymd.uix.datatables import MDDataTable

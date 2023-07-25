@@ -102,7 +102,6 @@ class Ocr:
             reform_data = self.reform(image_data)
 
             if self.data:
-
                 for i, elem in enumerate(self.data):
                     if elem[1] == reform_data[1]:
                         self.data.remove(self.data[i])
