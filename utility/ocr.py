@@ -11,10 +11,10 @@ class Ocr:
     path = '/home/sunprizrak/Изображения/vladimir'
 
     def __init__(self):
-        self.data = []
+        self.data = {}
 
     @staticmethod
-    def reform(data: list):
+    def reform(data: list, path: str):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
 
         # remove (Profile, X)
@@ -87,6 +87,8 @@ class Ocr:
             lines = [res[3:7], res[7:11], res[11:]]
             res = res[:3] + lines[0][:2] + [lines[1][0], lines[1][2]] + [lines[2][0]]
 
+        res.insert(0, path)
+
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
         res.append(date)
@@ -99,15 +101,15 @@ class Ocr:
 
         for el in dir_list:
             image_data = getattr(self, 'ocr').ocr(el)
-            reform_data = self.reform(image_data)
+            path = os.path.join(self.path, el)
+            reform_data = self.reform(image_data, path)
 
-            if self.data:
-                for i, elem in enumerate(self.data):
-                    if elem[1] == reform_data[1]:
-                        self.data.remove(self.data[i])
-                        break
+            if self.data.get(reform_data[2]):
+                if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
+                    self.data[reform_data[2]] = reform_data
+            else:
+                self.data[reform_data[2]] = reform_data
 
-            self.data.append(reform_data)
             print(reform_data)
 
     def __call__(self, *args, **kwargs):

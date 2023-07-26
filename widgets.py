@@ -15,10 +15,12 @@ class MDData(MDScreen):
 
     def __init__(self, **kwargs):
         super(MDData, self).__init__(**kwargs)
+        self.app = MDApp.get_running_app()
+        self.data = {}
         self.data_tables = MDDataTable(
             background_color_header="#65275d",
             background_color_cell="#451938",
-            background_color_selected_cell="e4514f",
+            background_color_selected_cell="#e4514f",
             use_pagination=True,
             check=True,
             column_data=[
@@ -43,12 +45,23 @@ class MDData(MDScreen):
         self.add_widget(self.data_tables)
 
     def add_row(self, data) -> None:
-        try:
-            for el in data:
-                last_num_row = self.count_row
-                self.data_tables.add_row([str(last_num_row + 1), *el])
-        except Exception as error:
-            print(error)
+        for key, val in data.items():
+            last_num_row = self.count_row
+            try:
+                if self.data.get(key):
+                    if float(self.data[key][-2].replace(',', '.')) <= float(val[-2].replace(',', '.')):
+                        self.data[key] = val
+                        for el in self.data_tables.row_data:
+                            if key in el:
+                                self.data_tables.update_row(
+                                    el,
+                                    [el[0], *val[1:]]
+                                )
+                else:
+                    self.data[key] = val
+                    self.data_tables.add_row([str(last_num_row + 1), *val[1:]])
+            except Exception as error:
+                print(error)
 
     @property
     def count_row(self):
@@ -57,7 +70,12 @@ class MDData(MDScreen):
     def on_row_press(self, instance_table, instance_row):
         '''Called when a table row is clicked.'''
 
-        print(instance_table, instance_row)
+        if self.data.get(instance_row.text):
+            key_id = instance_row.text
+            self.app.root.ids.main_screen.ids.screenshot.source = self.data[key_id][0]
+
+
+
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
