@@ -1,5 +1,7 @@
 import os
-from kivy.properties import ObjectProperty
+from functools import partial
+
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
 from kivymd.uix.filemanager import MDFileManager
 from utility.ocr import Ocr
@@ -7,6 +9,7 @@ from widgets import BaseScreen
 import multiprocessing as mp
 
 
+# for test table
 def test_start():
     # for test, after delete this list
     response = {'8727206': ['/home/sunprizrak/Изображения/vladimir/fdsfgsdf.png', '0(.3)', '8727206', 'AK47.', '48', '26', '10', '54', '4,922', '26/07/2023'], '8835971': ['/home/sunprizrak/Изображения/vladimir/image.png', '"J7"', '8835971', '#HOUSEOFCARDS', '41', '21', '7', '52', '3,357', '26/07/2023'], '8864723': ['/home/sunprizrak/Изображения/vladimir/Без имени.png', 'pp8864723', '8864723', 'Bertholletia', '47', '27', '5', '30', '4,292', '26/07/2023'], '8966174': ['/home/sunprizrak/Изображения/vladimir/betwin.png', 'Conflux', '8966174', 'K14.0', '40', '14', '2', '37', '3,466', '26/07/2023'], '9075270': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-17_23-45-03.jpg', 'm@rmel@dk@', '9075270', 'FreedomBlast', '47', '27', '21', '31', '2,928', '26/07/2023'], '8668791': ['/home/sunprizrak/Изображения/vladimir/asdfsadfqwe.png', 'pomey', '8668791', 'BITCOIN', '38', '18', '5', '46', '2,531', '26/07/2023'], '8739697': ['/home/sunprizrak/Изображения/vladimir/sdfasdf.png', '%Quee~fore', '8739697', 'DirtyCarnival', '45', '23', '6', '31', '3,257', '26/07/2023'], '8514819': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-14_20-10-09.jpg', 'Naatu Naatu', '8514819', 'Gulliver', '43', '21', '7', '46', '8,028', '26/07/2023'], '9068808': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-16_19-45-25.jpg', 'MonPlatin', '9068808', 'The Thor', '44', '21', '3', '40', '1,547', '26/07/2023'], '8864104': ['/home/sunprizrak/Изображения/vladimir/asasdfasdf.png', 'Uroda', '8864104', 'FreedomBlast', '51', '29', '20', '60', '1,650', '26/07/2023']}
@@ -15,10 +18,11 @@ def test_start():
 
 
 class MainScreen(BaseScreen):
+    path = StringProperty()
+    table = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
-        self.table = ObjectProperty()
         self.ocr = Ocr()
         self.manager_open = False
         self.file_manager = MDFileManager(
@@ -31,12 +35,7 @@ class MainScreen(BaseScreen):
         self.manager_open = True
 
     def select_path(self, path: str):
-        if os.path.isfile(path):
-            file_name = path.split('/')[-1]
-            self.table.add_row([[file_name]])
-        elif os.path.isdir(path):
-            print('dir')
-
+        self.path = path
         self.exit_manager()
 
     def exit_manager(self, *args):
@@ -47,21 +46,23 @@ class MainScreen(BaseScreen):
         self.app.root.transition = FallOutTransition()
         self.app.root.transition.direction = 'left'
         self.app.root.current = 'settings_screen'
+        print(self.ocr.data)
 
     def start(self, button):
         if button.text.lower() == 'start':
             def _callback(response):
                 button.text = 'Start'
                 button.md_bg_color = 'green'
+                self.ids.main_spin.active = False
                 self.table.add_row(data=response)
 
             button.text = 'Stop'
             button.md_bg_color = 'red'
             setattr(self, 'pool', mp.Pool())
-            # for test, after delete func test_start
 
             try:
-                self.pool.apply_async(func=self.ocr, callback=_callback)
+                self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=_callback)
+                self.ids.main_spin.active = True
             except Exception as error:
                 print(error)
             finally:

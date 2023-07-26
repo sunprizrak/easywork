@@ -8,8 +8,6 @@ import copy
 
 
 class Ocr:
-    path = '/home/sunprizrak/Изображения/vladimir'
-
     def __init__(self):
         self.data = {}
 
@@ -94,33 +92,45 @@ class Ocr:
         res.append(date)
         return res
 
-    def main(self):
-        os.chdir(path=self.path)
-        dir_list = os.listdir(path=self.path)
+    def main(self, path: str):
+        setattr(self, 'path', path)
         setattr(self, 'ocr', PaddleOCR(use_angle_cls=True, show_log=False))
 
-        for el in dir_list:
-            image_data = getattr(self, 'ocr').ocr(el)
-            path = os.path.join(self.path, el)
-            reform_data = self.reform(image_data, path)
-
-            if self.data.get(reform_data[2]):
-                if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
-                    self.data[reform_data[2]] = reform_data
-            else:
-                self.data[reform_data[2]] = reform_data
-
+        if os.path.isfile(self.path):
+            dir_name = os.path.dirname(path)
+            file_name = os.path.basename(path)
+            os.chdir(path=dir_name)
+            image_data = getattr(self, 'ocr').ocr(file_name)
+            reform_data = self.reform(image_data, self.path)
+            self.data[reform_data[2]] = reform_data
             print(reform_data)
+        elif os.path.isdir(self.path):
+            os.chdir(path=self.path)
+            dir_list = os.listdir(path=self.path)
 
-    def __call__(self, *args, **kwargs):
-        self.main()
+            for el in dir_list:
+                image_data = getattr(self, 'ocr').ocr(el)
+                path = os.path.join(self.path, el)
+                reform_data = self.reform(image_data, path)
+
+                if self.data.get(reform_data[2]):
+                    if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
+                        self.data[reform_data[2]] = reform_data
+                else:
+                    self.data[reform_data[2]] = reform_data
+
+                print(reform_data)
+
+    def __call__(self, path: str):
+        self.main(path=path)
         return self.data
 
 
 if __name__ == '__main__':
+    test_path = '/home/sunprizrak/Изображения/vladimir'
     start = time()
     ocr = Ocr()
-    ocr()
+    ocr(path=test_path)
     print(f"Время затраченное на работу: {time() - start}")
     # columns = ['Username', 'ID', 'Club', 'VPIP', 'PFR', '3-Bet', 'C-Bet', 'Total_Hands', 'Date']
 

@@ -61,6 +61,10 @@
                     on_release:
                         root.file_manager_open()
 
+                MDLabel:
+                    text: root.path
+                    adaptive_width: True
+
             MDBoxLayout:
                 orientation: 'horizontal'
                 spacing: dp(30)
@@ -85,7 +89,12 @@
                     disabled: False if table_screen.data_tables.row_data else True
                     on_release:
 
-
+        MDSpinner:
+            id: main_spin
+            size_hint: None, None
+            size: dp(38), dp(38)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            active: False
 
 
 
