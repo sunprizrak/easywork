@@ -94,14 +94,15 @@ class MDData(MDScreen):
                 screen.ids.screenshot.source = 'assets/img/chost_image.png'
                 screen.ids.main_layout.remove_widget(close_button)
 
-            close_button = MDIconButton(
-                icon='close',
-                icon_color='white',
-                pos_hint={'x': .965, 'y': .95},
-                on_release=lambda x: _clear_widgets(),
-            )
+            if not any([isinstance(widget, MDIconButton) for widget in screen.ids.main_layout.children]):
+                close_button = MDIconButton(
+                    icon='close',
+                    icon_color='white',
+                    pos_hint={'x': .965, 'y': .95},
+                    on_release=lambda x: _clear_widgets(),
+                )
 
-            screen.ids.main_layout.add_widget(close_button)
+                screen.ids.main_layout.add_widget(close_button)
 
             def _add_edit_tools():
                 for el in data:

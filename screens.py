@@ -73,7 +73,6 @@ class MainScreen(BaseScreen):
                         timeout=0.5,
                     ))
                     self.event()
-
                 else:
                     self.table.add_row(data=response)
 
