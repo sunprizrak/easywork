@@ -1,7 +1,13 @@
+from kivy.clock import Clock
 from kivy.metrics import dp
 from kivymd.app import MDApp
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.datatables import MDDataTable
+from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.selectioncontrol import MDSwitch
+from kivymd.uix.textfield import MDTextField
 
 
 class BaseScreen(MDScreen):
@@ -44,7 +50,7 @@ class MDData(MDScreen):
         self.data_tables.bind(on_check_press=self.on_check_press)
         self.add_widget(self.data_tables)
 
-    def add_row(self, data) -> None:
+    def add_row(self, data: dict) -> None:
         for key, val in data.items():
             last_num_row = self.count_row
             try:
@@ -57,6 +63,7 @@ class MDData(MDScreen):
                                     el,
                                     [el[0], *val[1:]]
                                 )
+                                break
                 else:
                     self.data[key] = val
                     self.data_tables.add_row([str(last_num_row + 1), *val[1:]])
@@ -74,13 +81,73 @@ class MDData(MDScreen):
             key_id = instance_row.text
             self.app.root.ids.main_screen.ids.screenshot.source = self.data[key_id][0]
 
+            name_columns = [el[0] for el in self.data_tables.column_data[1:-1]]
+            data = list(zip(name_columns, self.data[instance_row.text][1:-1]))
+            print(data)
 
+            for el in data:
+
+                field = MDTextField(
+                    mode="rectangle",
+                    hint_text=el[0],
+                    text=el[1],
+                    readonly=True,
+                )
+
+                self.app.root.ids.main_screen.ids.fields_box.add_widget(field)
+
+            def _switch_on():
+                for widget in self.app.root.ids.main_screen.ids.buttons_box.children:
+                    if isinstance(widget, MDRaisedButton):
+                        widget.disabled = False
+
+                setattr(self, 'data_edit', {})
+
+                for widget in self.app.root.ids.main_screen.ids.fields_box.children:
+                    widget.readonly = False
+                    self.data_edit[widget.hint_text] = widget.text
+
+            def _switch_off():
+                for widget in self.app.root.ids.main_screen.ids.buttons_box.children:
+                    if isinstance(widget, MDRaisedButton):
+                        widget.disabled = True
+
+                if self.__dict__.get('data_edit'):
+
+                    for widget in self.app.root.ids.main_screen.ids.fields_box.children:
+                        widget.text = self.data_edit.get(widget.hint_text)
+                        widget.readonly = True
+
+                    delattr(self, 'data_edit')
+
+            class SwitchUpdate(MDSwitch):
+                def __init__(self, **kwargs):
+                    super(SwitchUpdate, self).__init__(**kwargs)
+                    self.icon_active = 'check'
+                    self.icon_inactive_color = 'grey'
+
+                def on_active(self, instance_switch, active_value: bool) -> None:
+                    super(SwitchUpdate, self).on_active(instance_switch, active_value)
+                    if active_value:
+                        _switch_on()
+                    else:
+                        _switch_off()
+
+            switch = SwitchUpdate()
+
+            button_update = MDRaisedButton(
+                text='Update row',
+                md_bg_color='blue',
+                disabled=True,
+            )
+
+            self.app.root.ids.main_screen.ids.buttons_box.add_widget(switch)
+            self.app.root.ids.main_screen.ids.buttons_box.add_widget(button_update)
 
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
-
-        print(instance_table, current_row)
+        return current_row
 
     def sort_on_signal(self, data):
         return zip(*sorted(enumerate(data), key=lambda l: l[1][2]))
