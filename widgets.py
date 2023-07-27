@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.metrics import dp
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.button import MDRaisedButton, MDIconButton
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
@@ -83,67 +83,92 @@ class MDData(MDScreen):
 
             name_columns = [el[0] for el in self.data_tables.column_data[1:-1]]
             data = list(zip(name_columns, self.data[instance_row.text][1:-1]))
-            print(data)
 
-            for el in data:
+            screen = self.app.root.ids.main_screen
 
-                field = MDTextField(
-                    mode="rectangle",
-                    hint_text=el[0],
-                    text=el[1],
-                    readonly=True,
-                )
+            def _clear_widgets():
+                if all([screen.ids.fields_box.children, screen.ids.buttons_box.children]):
+                    screen.ids.fields_box.clear_widgets(children=None)
+                    screen.ids.buttons_box.clear_widgets(children=None)
 
-                self.app.root.ids.main_screen.ids.fields_box.add_widget(field)
+                self.app.root.ids.main_screen.ids.screenshot.source = 'assets/img/chost_image.png'
 
-            def _switch_on():
-                for widget in self.app.root.ids.main_screen.ids.buttons_box.children:
-                    if isinstance(widget, MDRaisedButton):
-                        widget.disabled = False
-
-                setattr(self, 'data_edit', {})
-
-                for widget in self.app.root.ids.main_screen.ids.fields_box.children:
-                    widget.readonly = False
-                    self.data_edit[widget.hint_text] = widget.text
-
-            def _switch_off():
-                for widget in self.app.root.ids.main_screen.ids.buttons_box.children:
-                    if isinstance(widget, MDRaisedButton):
-                        widget.disabled = True
-
-                if self.__dict__.get('data_edit'):
-
-                    for widget in self.app.root.ids.main_screen.ids.fields_box.children:
-                        widget.text = self.data_edit.get(widget.hint_text)
-                        widget.readonly = True
-
-                    delattr(self, 'data_edit')
-
-            class SwitchUpdate(MDSwitch):
-                def __init__(self, **kwargs):
-                    super(SwitchUpdate, self).__init__(**kwargs)
-                    self.icon_active = 'check'
-                    self.icon_inactive_color = 'grey'
-
-                def on_active(self, instance_switch, active_value: bool) -> None:
-                    super(SwitchUpdate, self).on_active(instance_switch, active_value)
-                    if active_value:
-                        _switch_on()
-                    else:
-                        _switch_off()
-
-            switch = SwitchUpdate()
-
-            button_update = MDRaisedButton(
-                text='Update row',
-                md_bg_color='blue',
-                disabled=True,
+            close_button = MDIconButton(
+                icon='close',
+                icon_color='white',
+                pos_hint={'x': .965, 'y': .95},
+                on_release=lambda x: _clear_widgets(),
             )
 
-            self.app.root.ids.main_screen.ids.buttons_box.add_widget(switch)
-            self.app.root.ids.main_screen.ids.buttons_box.add_widget(button_update)
+            screen.ids.main_layout.add_widget(close_button)
 
+            def _add_edit_tools():
+                for el in data:
+
+                    field = MDTextField(
+                        mode="rectangle",
+                        hint_text=el[0],
+                        text=el[1],
+                        readonly=True,
+                    )
+
+                    screen.ids.fields_box.add_widget(field)
+
+                def _switch_on():
+                    for widget in screen.ids.buttons_box.children:
+                        if isinstance(widget, MDRaisedButton):
+                            widget.disabled = False
+
+                    setattr(self, 'data_edit', {})
+
+                    for widget in screen.ids.fields_box.children:
+                        widget.readonly = False
+                        self.data_edit[widget.hint_text] = widget.text
+
+                def _switch_off():
+                    for widget in screen.ids.buttons_box.children:
+                        if isinstance(widget, MDRaisedButton):
+                            widget.disabled = True
+
+                    if self.__dict__.get('data_edit'):
+
+                        for widget in screen.ids.fields_box.children:
+                            widget.text = self.data_edit.get(widget.hint_text)
+                            widget.readonly = True
+
+                        delattr(self, 'data_edit')
+
+                class SwitchUpdate(MDSwitch):
+                    def __init__(self, **kwargs):
+                        super(SwitchUpdate, self).__init__(**kwargs)
+                        self.icon_active = 'check'
+                        self.icon_inactive_color = 'grey'
+
+                    def on_active(self, instance_switch, active_value: bool) -> None:
+                        super(SwitchUpdate, self).on_active(instance_switch, active_value)
+                        if active_value:
+                            _switch_on()
+                        else:
+                            _switch_off()
+
+                switch = SwitchUpdate()
+
+                button_update = MDRaisedButton(
+                    text='Update row',
+                    md_bg_color='blue',
+                    disabled=True,
+                )
+
+                screen.ids.buttons_box.add_widget(switch)
+                screen.ids.buttons_box.add_widget(button_update)
+
+            if all([screen.ids.fields_box.children, screen.ids.buttons_box.children]):
+                for el in data:
+                    for widget in screen.ids.fields_box.children:
+                        if widget.hint_text == el[0]:
+                            widget.text = el[1]
+            else:
+                _add_edit_tools()
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
