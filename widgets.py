@@ -91,7 +91,8 @@ class MDData(MDScreen):
                     screen.ids.fields_box.clear_widgets(children=None)
                     screen.ids.buttons_box.clear_widgets(children=None)
 
-                self.app.root.ids.main_screen.ids.screenshot.source = 'assets/img/chost_image.png'
+                screen.ids.screenshot.source = 'assets/img/chost_image.png'
+                screen.ids.main_layout.remove_widget(close_button)
 
             close_button = MDIconButton(
                 icon='close',
@@ -167,6 +168,11 @@ class MDData(MDScreen):
                     for widget in screen.ids.fields_box.children:
                         if widget.hint_text == el[0]:
                             widget.text = el[1]
+                for widget in screen.ids.buttons_box.children:
+                    if not isinstance(widget, MDRaisedButton):
+                        if widget.active:
+                            widget.active = False
+
             else:
                 _add_edit_tools()
 
