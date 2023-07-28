@@ -103,7 +103,6 @@ class Ocr:
             image_data = getattr(self, 'ocr').ocr(file_name)
             reform_data = self.reform(image_data, self.path)
             self.data[reform_data[2]] = reform_data
-            print(reform_data)
         elif os.path.isdir(self.path):
             os.chdir(path=self.path)
             dir_list = os.listdir(path=self.path)
@@ -118,8 +117,6 @@ class Ocr:
                         self.data[reform_data[2]] = reform_data
                 else:
                     self.data[reform_data[2]] = reform_data
-
-                print(reform_data)
 
     def __call__(self, path: str):
         self.main(path=path)

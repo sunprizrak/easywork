@@ -172,10 +172,10 @@ class MDData(MDScreen):
                     delattr(self, 'data_edit')
                     switch.active = False
 
-
                 button_update = MDRaisedButton(
                     text='Update row',
-                    md_bg_color='blue',
+                    md_bg_color='purple',
+                    font_style='Button',
                     disabled=True,
                     on_release=lambda x: _update_row()
                 )
@@ -194,6 +194,22 @@ class MDData(MDScreen):
                             widget.active = False
             else:
                 _add_edit_tools()
+
+    def delete_checked_rows(self):
+        def deselect_rows(*args):
+            self.data_tables.table_data.select_all("normal")
+
+        for data in self.data_tables.get_row_checks():
+            self.data_tables.remove_row(data)
+            del self.data[data[2]]
+
+        for i, row in enumerate(self.data_tables.row_data, 1):
+            self.data_tables.update_row(
+                row,
+                [str(i), *row[1:]]
+            )
+
+        Clock.schedule_once(deselect_rows)
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''

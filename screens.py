@@ -92,6 +92,7 @@ class MainScreen(BaseScreen):
             button.text = 'Start'
             button.md_bg_color = 'green'
 
+
 class SettingsScreen(BaseScreen):
 
     def __init__(self, **kwargs):

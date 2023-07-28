@@ -34,10 +34,7 @@ class GoogleSheet:
 
 if __name__ == '__main__':
     gs = GoogleSheet()
-    gs.create('Vladimir_Ocr')
-    gs.share('sunprizrak@gmail.com')
-    print(type(gs.sheet))
-    print(dir(gs.sheet))
+    gs.open()
 
 
 

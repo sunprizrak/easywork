@@ -2,14 +2,17 @@ from kivy.storage.jsonstore import JsonStore
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.theming import ThemeManager
+from kivy.core.text import LabelBase
 
 
 class CustomThemeManager(ThemeManager):
     def __init__(self, **kwargs):
         super(CustomThemeManager, self).__init__(**kwargs)
         self.theme_style = 'Dark'
-        a = ['Red', 'Pink', 'Purple', 'DeepPurple', 'Indigo', 'Blue', 'LightBlue', 'Cyan', 'Teal', 'Green', 'LightGreen', 'Lime', 'Yellow', 'Amber', 'Orange', 'DeepOrange', 'Brown', 'Gray', 'BlueGray']
-        # self.primary_palette = 'DeepPurple'
+        self.font_styles.update({
+            "Button": ["GlossySheen", 21, True, 1.25],
+        })
+        LabelBase.register(name='GlossySheen', fn_regular='assets/font/GlossySheenRegular.ttf')
 
 
 class MainApp(MDApp):

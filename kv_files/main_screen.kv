@@ -65,35 +65,51 @@
         MDBoxLayout:
             id: tools
             orientation: 'vertical' if Window.width < root.max_width else 'horizontal'
-            padding: dp(10)
+            padding: [dp(10), 0, dp(10), 0]
+            spacing: dp(10)
             adaptive_height: True
 
             MDBoxLayout:
                 orientation: 'horizontal'
-                md_bg_color: root.md_bg_color
                 adaptive_height: True
 
-                MDIconButton:
-                    icon: "cog"
-                    theme_text_color: "Custom"
-                    color: 'white'
-                    on_release:
-                        root.open_settings()
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    adaptive_height: True
 
-                MDIconButton:
-                    icon: "image-plus"
-                    theme_text_color: "Custom"
-                    color: 'white'
-                    on_release:
-                        root.file_manager_open()
+                    MDIconButton:
+                        icon: "cog"
+                        theme_text_color: "Custom"
+                        color: 'white'
+                        on_release:
+                            root.open_settings()
 
-                MDLabel:
-                    text: root.path
-                    adaptive_width: True
+                    MDIconButton:
+                        icon: "image-plus"
+                        theme_text_color: "Custom"
+                        color: 'white'
+                        on_release:
+                            root.file_manager_open()
+
+                    MDLabel:
+                        text: root.path
+                        adaptive_width: True
+
+                MDBoxLayout:
+                    adaptive_size: True
+                    pos_hint: {'center_y': .5} if Window.width >= root.max_width else {'center_y': .4}
+
+                    MDRaisedButton:
+                        text: 'Delete Rows'
+                        font_style: 'Button'
+                        md_bg_color: 'purple'
+                        on_release:
+                            root.table.delete_checked_rows()
 
             MDBoxLayout:
                 orientation: 'horizontal'
                 spacing: dp(30)
+                padding: [dp(10), 0, dp(10), dp(5)]
                 size_hint_x: None if Window.width >= root.max_width else 1
                 width: Window.width - table_box.width if Window.width >= root.max_width else self.width
                 pos_hint: {'y': 0} if Window.width < root.max_width else {'right': 1}
@@ -102,14 +118,17 @@
                 MDRaisedButton:
                     id: button_start
                     text: "Start"
+                    font_style: 'Button'
                     md_bg_color: "green"
                     size_hint_x: .5
                     disabled: False
                     on_release:
                         root.start(self)
 
+
                 MDRaisedButton:
                     text: "Push To Google Sheet"
+                    font_style: 'Button'
                     md_bg_color: "blue"
                     size_hint_x: .5
                     disabled: False if table_screen.data_tables.row_data else True
