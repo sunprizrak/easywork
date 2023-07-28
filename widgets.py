@@ -132,12 +132,12 @@ class MDData(MDScreen):
                         if isinstance(widget, MDRaisedButton):
                             widget.disabled = True
 
-                    if self.__dict__.get('data_edit'):
-
-                        for widget in screen.ids.fields_box.children:
+                    for widget in screen.ids.fields_box.children:
+                        if self.__dict__.get('data_edit'):
                             widget.text = self.data_edit.get(widget.hint_text)
-                            widget.readonly = True
+                        widget.readonly = True
 
+                    if self.__dict__.get('data_edit'):
                         delattr(self, 'data_edit')
 
                 class SwitchUpdate(MDSwitch):
@@ -155,10 +155,29 @@ class MDData(MDScreen):
 
                 switch = SwitchUpdate()
 
+                def _update_row():
+                    old_data = self.data.get(key_id)
+                    new_data = [widget.text for widget in screen.ids.fields_box.children]
+                    new_data.reverse()
+                    res_data = [old_data[0]] + new_data + [old_data[-1]]
+                    self.data[key_id] = res_data
+
+                    for elem in self.data_tables.row_data:
+                        if key_id == elem[2]:
+                            self.data_tables.update_row(
+                                elem,
+                                [elem[0], *res_data[1:]]
+                            )
+
+                    delattr(self, 'data_edit')
+                    switch.active = False
+
+
                 button_update = MDRaisedButton(
                     text='Update row',
                     md_bg_color='blue',
                     disabled=True,
+                    on_release=lambda x: _update_row()
                 )
 
                 screen.ids.buttons_box.add_widget(switch)
@@ -173,7 +192,6 @@ class MDData(MDScreen):
                     if not isinstance(widget, MDRaisedButton):
                         if widget.active:
                             widget.active = False
-
             else:
                 _add_edit_tools()
 
