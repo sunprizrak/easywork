@@ -17,7 +17,7 @@ class BaseScreen(MDScreen):
         self.md_bg_color = self.theme_cls.bg_light
 
 
-class MDData(MDScreen):
+class MDData(BaseScreen):
 
     def __init__(self, **kwargs):
         super(MDData, self).__init__(**kwargs)
@@ -30,7 +30,7 @@ class MDData(MDScreen):
             use_pagination=True,
             check=True,
             column_data=[
-                ("№", dp(20)),
+                ("No.", dp(20)),
                 ("Username", dp(30)),
                 ("ID", dp(30)),
                 ("Club", dp(30)),
@@ -43,7 +43,7 @@ class MDData(MDScreen):
             ],
             row_data=[],
             rows_num=20,
-            sorted_on="Schedule",
+            sorted_on="No.",
             sorted_order="ASC",
         )
         self.data_tables.bind(on_row_press=self.on_row_press)
@@ -213,7 +213,7 @@ class MDData(MDScreen):
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
-        return current_row
+        pass
 
     def sort_on_signal(self, data):
         return zip(*sorted(enumerate(data), key=lambda l: l[1][2]))
