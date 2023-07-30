@@ -1,11 +1,15 @@
 import os
 from functools import partial
-
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton
 from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.textfield import MDTextField
+
 from utility.ocr import Ocr
+from utility.google_sheet import GoogleSheet
 from widgets import BaseScreen
 import multiprocessing as mp
 
@@ -92,6 +96,53 @@ class MainScreen(BaseScreen):
             button.text = 'Start'
             button.md_bg_color = 'green'
 
+    def push_google_sheet(self, table_name=None):
+        if self.app.storage.exists('google_sheet'):
+            if not hasattr(self, 'google_sheet'):
+                setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
+        else:
+            self.open_settings()
+
+        content = MDBoxLayout(
+            orientation='vertical',
+            size_hint_y=None,
+            height="50dp",
+        )
+
+        field = MDTextField(
+            hint_text='sheet name',
+            mode='rectangle',
+            text_color_normal='white',
+            hint_text_color_normal='white',
+            helper_text_mode='on_error',
+        )
+
+        content.add_widget(field)
+
+        def _error_callback(error):
+            field.error = True
+            field.helper_text = error
+
+        def _success_callback():
+            self.app.close_dialog(self.app.dialog)
+            self.app.open_snackbar(
+                text='Pushed successfully',
+                md_bg_color="#17d86e",
+                pos_hint={'top': 1},
+            )
+
+        button = MDFlatButton(
+            text="push",
+            theme_text_color="Custom",
+            font_style='Button',
+            text_color=self.app.theme_cls.primary_color,
+            on_release=lambda x: self.google_sheet.update(name_sheet=field.text, error_callback=_error_callback, success_callback=_success_callback),
+        )
+
+        self.app.show_dialog(button=button, content=content)
+
+        self.app.dialog.title = 'Enter google sheet name'
+
 
 class SettingsScreen(BaseScreen):
 
@@ -127,6 +178,13 @@ class SettingsScreen(BaseScreen):
     def save(self):
         path_key = self.ids.path_google_sheet.text
         self.app.storage.put('google_sheet', api_key=path_key)
+        self.app.open_snackbar(
+            text='successfully',
+            md_bg_color="#17d86e",
+            pos_hint={'top': 1},
+        )
+
+
 
 
 
