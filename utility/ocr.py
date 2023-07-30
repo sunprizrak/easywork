@@ -1,7 +1,6 @@
 import os
 import datetime
 from time import time
-import pandas as pd
 from paddleocr import PaddleOCR
 import re
 import copy
@@ -129,9 +128,3 @@ if __name__ == '__main__':
     ocr = Ocr()
     ocr(path=test_path)
     print(f"Время затраченное на работу: {time() - start}")
-    # columns = ['Username', 'ID', 'Club', 'VPIP', 'PFR', '3-Bet', 'C-Bet', 'Total_Hands', 'Date']
-
-    # df = pd.DataFrame(self.data, index=range(1, len(self.data)+1), columns=columns)
-    # #pd.set_option('display.max_rows', None)
-    # pd.set_option('display.max_columns', None)
-    # print(df)
