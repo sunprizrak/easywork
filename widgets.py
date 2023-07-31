@@ -17,7 +17,7 @@ class BaseScreen(MDScreen):
         self.md_bg_color = self.theme_cls.bg_light
 
 
-class MDData(BaseScreen):
+class MDData(MDScreen):
 
     def __init__(self, **kwargs):
         super(MDData, self).__init__(**kwargs)

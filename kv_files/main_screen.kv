@@ -65,7 +65,7 @@
         MDBoxLayout:
             id: tools
             orientation: 'vertical' if Window.width < root.max_width else 'horizontal'
-            padding: [dp(10), 0, dp(10), dp(5)]
+            padding: [dp(10), 0, dp(10), 0]
             spacing: dp(10)
             adaptive_height: True
 
@@ -97,6 +97,7 @@
 
                 MDBoxLayout:
                     adaptive_size: True
+                    pos_hint: {'center_y': .5} if Window.width >= root.max_width else {'bottom': 1}
 
                     MDRaisedButton:
                         text: 'Delete Rows'
@@ -132,7 +133,7 @@
                     size_hint_x: .5
                     # disabled: False if table_screen.data_tables.row_data else True
                     on_release:
-                        root.push_google_sheet()
+                        root.open_push_dialog()
 
         MDSpinner:
             id: main_spin

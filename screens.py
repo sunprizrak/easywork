@@ -1,11 +1,12 @@
 import os
 from functools import partial
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.progressbar import MDProgressBar
 from kivymd.uix.textfield import MDTextField
 
 from utility.ocr import Ocr
@@ -25,6 +26,8 @@ def test_start(path: str):
 class MainScreen(BaseScreen):
     path = StringProperty()
     table = ObjectProperty()
+    state = StringProperty("stop")
+    progress_bar = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
@@ -34,6 +37,19 @@ class MainScreen(BaseScreen):
             exit_manager=self.exit_manager,
             select_path=self.select_path,
         )
+
+    def on_state(self, instance, value):
+        {
+            "start": self.progress_bar.start,
+            "stop": self.progress_bar.stop,
+        }.get(value)()
+
+    def press_progress(self):
+        if self.state == 'stop':
+            self.state = 'start'
+        else:
+            self.state = 'stop'
+            self.ids.main_layout.remove_widget(self.progress_bar)
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser("~"))
@@ -96,7 +112,72 @@ class MainScreen(BaseScreen):
             button.text = 'Start'
             button.md_bg_color = 'green'
 
-    def push_google_sheet(self, table_name=None):
+    def push(self, field, button):
+
+        '''for test, after to delete'''
+        lol = ['vpip', 'pfr', '3-bet', 'c-bet', 'hands', 'date']
+        self.table.data = {
+            '8727206': ['/home/sunprizrak/Изображения/vladimir/fdsfgsdf.png', '0(.3)', '8727206', 'AK47.', *lol],
+            '8835971': ['/home/sunprizrak/Изображения/vladimir/image.png', '"J7"', '8835971', '#HOUSEOFCARDS', *lol],
+            '8864723': ['/home/sunprizrak/Изображения/vladimir/Без имени.png', 'pp8864723', '8864723', 'Bertholletia',
+                        *lol],
+            '8966174': ['/home/sunprizrak/Изображения/vladimir/betwin.png', 'Conflux', '8966174', 'K14.0', *lol],
+            '9075270': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-17_23-45-03.jpg', 'm@rmel@dk@', '9075270',
+                        'FreedomBlast', *lol],
+            '8668791': ['/home/sunprizrak/Изображения/vladimir/asdfsadfqwe.png', 'pomey', '8668791', 'BITCOIN', *lol],
+            '8739697': ['/home/sunprizrak/Изображения/vladimir/sdfasdf.png', '%Quee~fore', '8739697', 'DirtyCarnival',
+                        *lol],
+            '8514819': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-14_20-10-09.jpg', 'Naatu Naatu', '8514819',
+                        'Gulliver', *lol],
+            '9068808': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-16_19-45-25.jpg', 'MonPlatin', '9068808',
+                        'The Thor', *lol]}
+        '''end test'''
+
+        @mainthread
+        def _error_callback(response):
+            self.press_progress()
+            field.error = True
+            field.helper_text = response.args[0].get('error')
+            button.disabled = False
+
+        @mainthread
+        def _callback_push(response):
+            self.press_progress()
+            self.app.close_dialog(self.app.dialog)
+            self.app.open_snackbar(
+                text='Pushed successfully',
+                md_bg_color="#17d86e",
+                pos_hint={'top': 1},
+            )
+
+        setattr(self, 'pool', mp.Pool())
+
+        try:
+            self.pool.apply_async(func=partial(
+                self.google_sheet.update,
+                name_sheet=field.text,
+                data_table=self.table.data),
+                callback=_callback_push,
+                error_callback=_error_callback,
+            )
+        except Exception as error:
+            print(error)
+        finally:
+            self.pool.close()
+
+        button.disabled = True
+
+        self.progress_bar = MDProgressBar(
+            type="indeterminate",
+            back_color=self.md_bg_color,
+            radius=[30, 30, 30, 30],
+            pos_hint={'top': 1},
+            size_hint_y=.005,
+        )
+        self.ids.main_layout.add_widget(self.progress_bar)
+
+
+    def open_push_dialog(self):
         if self.app.storage.exists('google_sheet'):
             if not hasattr(self, 'google_sheet'):
                 setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
@@ -119,24 +200,12 @@ class MainScreen(BaseScreen):
 
         content.add_widget(field)
 
-        def _error_callback(error):
-            field.error = True
-            field.helper_text = error
-
-        def _success_callback():
-            self.app.close_dialog(self.app.dialog)
-            self.app.open_snackbar(
-                text='Pushed successfully',
-                md_bg_color="#17d86e",
-                pos_hint={'top': 1},
-            )
-
         button = MDFlatButton(
             text="push",
             theme_text_color="Custom",
             font_style='Button',
             text_color=self.app.theme_cls.primary_color,
-            on_release=lambda x: self.google_sheet.update(name_sheet=field.text, error_callback=_error_callback, success_callback=_success_callback),
+            on_release=lambda x: (self.push(field=field, button=button), self.press_progress()),
         )
 
         self.app.show_dialog(button=button, content=content)
