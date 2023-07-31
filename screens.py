@@ -8,7 +8,6 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.uix.progressbar import MDProgressBar
 from kivymd.uix.textfield import MDTextField
-
 from utility.ocr import Ocr
 from utility.google_sheet import GoogleSheet
 from widgets import BaseScreen
@@ -27,7 +26,6 @@ class MainScreen(BaseScreen):
     path = StringProperty()
     table = ObjectProperty()
     state = StringProperty("stop")
-    progress_bar = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
@@ -167,15 +165,14 @@ class MainScreen(BaseScreen):
 
         button.disabled = True
 
-        self.progress_bar = MDProgressBar(
+        setattr(self, 'progress_bar', MDProgressBar(
             type="indeterminate",
             back_color=self.md_bg_color,
             radius=[30, 30, 30, 30],
             pos_hint={'top': 1},
             size_hint_y=.005,
-        )
+        ))
         self.ids.main_layout.add_widget(self.progress_bar)
-
 
     def open_push_dialog(self):
         if self.app.storage.exists('google_sheet'):
