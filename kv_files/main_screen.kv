@@ -131,9 +131,11 @@
                     font_style: 'Button'
                     md_bg_color: "blue"
                     size_hint_x: .5
-                    # disabled: False if table_screen.data_tables.row_data else True
+                    disabled: False if table_screen.data_tables.row_data else True
                     on_release:
-                        root.open_push_dialog()
+                        #root.open_push_dialog()
+                        print(root.table.data)
+                        print(len(root.table.data))
 
         MDSpinner:
             id: main_spin

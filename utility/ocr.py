@@ -3,7 +3,6 @@ import datetime
 from time import time
 from paddleocr import PaddleOCR
 import re
-import copy
 
 
 class Ocr:
@@ -13,15 +12,6 @@ class Ocr:
     @staticmethod
     def reform(data: list, path: str):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
-
-        # remove (Profile, X)
-        for el in copy.copy(res):
-            count = 0
-            if el.lower() == 'profile' or el.lower() == 'x':
-                res.remove(el)
-                count += 1
-            if count == 2:
-                break
 
         # remove CT
         for el in res:
@@ -37,36 +27,23 @@ class Ocr:
             elif re.fullmatch('l\D*\d', el.lower()):
                 res.remove(el)
                 break
-        for i, el in enumerate(res):
-            if re.fullmatch('id[:;]\d*', el.lower()):
-                res[i] = el[3:]
-                break
-            elif re.fullmatch('id\d*]', el.lower()):
-                res[i] = el[2:]
-                break
-            elif re.fullmatch('id[:;]\d*\D*[.]\d', el.lower()):
-                el_id = list(el[3:-1])
-                for x in list(el[3:-1]):
-                    if not x.isdigit():
-                        el_id.remove(x)
-                res[i] = ''.join(el_id)
-                break
-            elif re.fullmatch('id\d*\D*[.]\d', el.lower()):
-                el_id = list(el[2:-1])
-                for x in list(el[2:-1]):
-                    if not x.isdigit():
-                        el_id.remove(x)
-                res[i] = ''.join(el_id)
-                break
-            elif re.fullmatch('\d*\D*[.]\d', el.lower()):
-                el_id = list(el[:-1])
-                for x in list(el[:-1]):
-                    if not x.isdigit():
-                        el_id.remove(x)
-                res[i] = ''.join(el_id)
-                break
 
-        # Club, % to number
+        # id and cut profile with x
+        for i, el in enumerate(res):
+            if re.fullmatch('[a-z]{,2}[:;]\d*', el.lower()):
+                for symbl in [':', ';']:
+                    if symbl in el:
+                        res[i] = el.split(symbl)[1]
+                        res = res[i-1:]  # cut profile and x if there
+                        break
+            elif re.fullmatch('[a-z]{,2}[:;]\d*[a-z]{,3}[.]\d', el.lower()):
+                for symbl in [':', ';']:
+                    if symbl in el:
+                        res[i] = ''.join([ex for ex in el.split(symbl)[1].split('.')[0] if ex.isdigit()])
+                        res = res[i-1:]  # cut profile and x if there
+                        break
+
+        # Club and % to number
         for i, el in enumerate(res):
             if re.fullmatch('\w{4}[:;].*', el.lower()):
                 res[i] = el[5:]
@@ -107,15 +84,17 @@ class Ocr:
             dir_list = os.listdir(path=self.path)
 
             for el in dir_list:
-                image_data = getattr(self, 'ocr').ocr(el)
-                path = os.path.join(self.path, el)
-                reform_data = self.reform(image_data, path)
+                if os.path.isfile(os.path.join(self.path, el)):
+                    image_data = getattr(self, 'ocr').ocr(el)
+                    path = os.path.join(self.path, el)
+                    reform_data = self.reform(image_data, path)
+                    print(reform_data)
 
-                if self.data.get(reform_data[2]):
-                    if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
+                    if self.data.get(reform_data[2]):
+                        if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
+                            self.data[reform_data[2]] = reform_data
+                    else:
                         self.data[reform_data[2]] = reform_data
-                else:
-                    self.data[reform_data[2]] = reform_data
 
     def __call__(self, path: str):
         self.main(path=path)
@@ -128,3 +107,4 @@ if __name__ == '__main__':
     ocr = Ocr()
     ocr(path=test_path)
     print(f"Время затраченное на работу: {time() - start}")
+

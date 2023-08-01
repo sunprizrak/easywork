@@ -78,13 +78,15 @@ class MainScreen(BaseScreen):
                     res = [{el[0]: el[1]} for el in response.items()]
 
                     def __callback(dt):
-                        if self.count == len(res) - 1:
+                        if self.count == len(res):
                             delattr(self, 'count')
                             self.event.cancel()
                             delattr(self, 'event')
                         else:
                             self.table.add_row(data=res[self.count])
+                            print(res[self.count])
                             self.count += 1
+                            print(self.count)
 
                     setattr(self, 'event', Clock.schedule_interval(
                         callback=__callback,
@@ -109,27 +111,11 @@ class MainScreen(BaseScreen):
             self.pool.terminate()
             button.text = 'Start'
             button.md_bg_color = 'green'
+            self.ids.main_spin.active = False
+
+
 
     def push(self, field, button):
-
-        '''for test, after to delete'''
-        lol = ['vpip', 'pfr', '3-bet', 'c-bet', 'hands', 'date']
-        self.table.data = {
-            '8727206': ['/home/sunprizrak/Изображения/vladimir/fdsfgsdf.png', '0(.3)', '8727206', 'AK47.', *lol],
-            '8835971': ['/home/sunprizrak/Изображения/vladimir/image.png', '"J7"', '8835971', '#HOUSEOFCARDS', *lol],
-            '8864723': ['/home/sunprizrak/Изображения/vladimir/Без имени.png', 'pp8864723', '8864723', 'Bertholletia',
-                        *lol],
-            '8966174': ['/home/sunprizrak/Изображения/vladimir/betwin.png', 'Conflux', '8966174', 'K14.0', *lol],
-            '9075270': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-17_23-45-03.jpg', 'm@rmel@dk@', '9075270',
-                        'FreedomBlast', *lol],
-            '8668791': ['/home/sunprizrak/Изображения/vladimir/asdfsadfqwe.png', 'pomey', '8668791', 'BITCOIN', *lol],
-            '8739697': ['/home/sunprizrak/Изображения/vladimir/sdfasdf.png', '%Quee~fore', '8739697', 'DirtyCarnival',
-                        *lol],
-            '8514819': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-14_20-10-09.jpg', 'Naatu Naatu', '8514819',
-                        'Gulliver', *lol],
-            '9068808': ['/home/sunprizrak/Изображения/vladimir/photo_2023-07-16_19-45-25.jpg', 'MonPlatin', '9068808',
-                        'The Thor', *lol]}
-        '''end test'''
 
         @mainthread
         def _error_callback(response):
