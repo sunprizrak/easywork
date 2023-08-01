@@ -96,8 +96,17 @@
                         adaptive_width: True
 
                 MDBoxLayout:
-                    adaptive_size: True
+                    orientation: 'horizontal'
+                    spacing: dp(10)
                     pos_hint: {'center_y': .5} if Window.width >= root.max_width else {'bottom': 1}
+                    adaptive_size: True
+
+                    MDRaisedButton:
+                        text: 'Delete img'
+                        font_style: 'Button'
+                        md_bg_color: 'purple'
+                        on_release:
+                            root.delete_img()
 
                     MDRaisedButton:
                         text: 'Delete Rows'
@@ -133,9 +142,7 @@
                     size_hint_x: .5
                     disabled: False if table_screen.data_tables.row_data else True
                     on_release:
-                        #root.open_push_dialog()
-                        print(root.table.data)
-                        print(len(root.table.data))
+                        root.open_push_dialog()
 
         MDSpinner:
             id: main_spin

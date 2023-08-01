@@ -84,9 +84,7 @@ class MainScreen(BaseScreen):
                             delattr(self, 'event')
                         else:
                             self.table.add_row(data=res[self.count])
-                            print(res[self.count])
                             self.count += 1
-                            print(self.count)
 
                     setattr(self, 'event', Clock.schedule_interval(
                         callback=__callback,
@@ -113,15 +111,15 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
 
-
-
     def push(self, field, button):
-
         @mainthread
         def _error_callback(response):
             self.press_progress()
-            field.error = True
-            field.helper_text = response.args[0].get('error')
+
+            if type(response) == 'dict':
+                field.error = True
+                field.helper_text = response.args[0].get('error')
+
             button.disabled = False
 
         @mainthread
@@ -194,6 +192,9 @@ class MainScreen(BaseScreen):
         self.app.show_dialog(button=button, content=content)
 
         self.app.dialog.title = 'Enter google sheet name'
+
+    def delete_img(self):
+        print('delete')
 
 
 class SettingsScreen(BaseScreen):

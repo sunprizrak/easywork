@@ -35,46 +35,62 @@ class GoogleSheet:
             data = worksheet.get_all_values()
 
             patterns = ['vpip', 'pfr', '3\D*bet', 'c\D*bet', 'hands', 'date']
-            columns = [max(i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())) for pattern in patterns]
 
-            for key, val in data_table.items():
-                rows_number = [cell.row for cell in worksheet.findall(key)]
+            columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())])]
 
-                columns_range = [f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}' for row in rows_number]
+            if len(columns) == len(patterns):
 
-                for el in columns_range:
-                    cell_list = worksheet.range(el)
+                for key, val in data_table.items():
+                    rows_number = [cell.row for cell in worksheet.findall(key)]
 
-                    for i, cell in enumerate(cell_list):
-                        cell.value = val[4:][i]
+                    for row in rows_number:
+                        hands_value = worksheet.cell(row, columns[-2]).value
 
-                    worksheet.update_cells(cell_list)
+                        if not hands_value or int(val[-2].replace(',', '')) > int(hands_value):
+                            column_range = f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}'
+                            cell_list = worksheet.range(column_range)
+
+                            for i, cell in enumerate(cell_list):
+                                cell.value = val[4:][i]
+
+                            worksheet.update_cells(cell_list)
 
 
 if __name__ == '__main__':
     gs = GoogleSheet(key='gs_credentials.json')
+    gs.auth()
     gs.open('Vladimir_Ocr')
+
 
     # ''' get all lists '''
     # all_worksheets = gs.sheet.worksheets()
     #
-    # worksheet = all_worksheets[-2]
+    # worksheet = all_worksheets[0]
     # data = worksheet.get_all_values()
     #
     # patterns = ['vpip', 'pfr', '3\D*bet', 'c\D*bet', 'hands', 'date']
-    # columns = [max(i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())) for pattern in patterns]
     #
-    # rows_number = [cell.row for cell in worksheet.findall('8966173')]
+    # columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())])]
+    # print(columns)
     #
-    # columns_range = [f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}' for row in rows_number]
+    # if len(columns) == len(patterns):
     #
-    # for el in columns_range:
-    #     cell_list = worksheet.range(el)
+    #     rows_number = [cell.row for cell in worksheet.findall('7690859')]
     #
-    #     for cell in cell_list:
-    #         cell.value = '1'
+    #     # hands_value = worksheet.cell(rows_number[0], columns[-2]).value
+    #     # print(hands_value)
     #
-    #     worksheet.update_cells(cell_list)
+    #
+    #     columns_range = [f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}' for row in rows_number]
+    #     print(columns_range)
+    #
+    #     for el in columns_range:
+    #         cell_list = worksheet.range(el)
+    #
+    #         for cell in cell_list:
+    #             cell.value = '1'
+    #
+    #         worksheet.update_cells(cell_list)
 
 
 
