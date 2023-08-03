@@ -201,13 +201,16 @@ class MDData(MDScreen):
 
         for data in self.data_tables.get_row_checks():
             self.data_tables.remove_row(data)
+
             del self.data[data[2]]
 
-        for i, row in enumerate(self.data_tables.row_data, 1):
-            self.data_tables.update_row(
-                row,
-                [str(i), *row[1:]]
-            )
+        if len(self.data) > 0:
+
+            for i, row in enumerate(self.data_tables.row_data, 1):
+                self.data_tables.update_row(
+                    row,
+                    [str(i), *row[1:]]
+                )
 
         Clock.schedule_once(deselect_rows)
 

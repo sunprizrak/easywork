@@ -194,7 +194,10 @@ class MainScreen(BaseScreen):
             self.open_settings()
 
     def delete_img(self):
-        print('delete')
+        for data in self.table.data_tables.get_row_checks():
+            os.remove(path=self.table.data.get(data[2])[0])
+
+        self.table.delete_checked_rows()
 
 
 class SettingsScreen(BaseScreen):
