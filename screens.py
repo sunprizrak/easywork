@@ -3,14 +3,10 @@ from functools import partial
 from kivy.clock import Clock, mainthread
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton
 from kivymd.uix.filemanager import MDFileManager
-from kivymd.uix.progressbar import MDProgressBar
-from kivymd.uix.textfield import MDTextField
 from utility.ocr import Ocr
 from utility.google_sheet import GoogleSheet
-from widgets import BaseScreen
+from widgets import BaseScreen, MyProgressBar
 import multiprocessing as mp
 
 
@@ -35,11 +31,23 @@ class MainScreen(BaseScreen):
             exit_manager=self.exit_manager,
             select_path=self.select_path,
         )
+        self.progress_bars = []
+
+    def on_pre_enter(self, *args):
+        self.path = self.app.storage.get('folder_path').get('path')
 
     def on_state(self, instance, value):
+        def _start():
+            for progress_bar in self.progress_bars:
+                progress_bar.start()
+
+        def _stop():
+            for progress_bar in self.progress_bars:
+                progress_bar.stop()
+
         {
-            "start": self.progress_bar.start,
-            "stop": self.progress_bar.stop,
+            "start": _start,
+            "stop": _stop,
         }.get(value)()
 
     def press_progress(self):
@@ -47,7 +55,9 @@ class MainScreen(BaseScreen):
             self.state = 'start'
         else:
             self.state = 'stop'
-            self.ids.main_layout.remove_widget(self.progress_bar)
+            for el in self.progress_bars:
+                self.ids.main_layout.remove_widget(el)
+            self.progress_bars.clear()
 
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser("~"))
@@ -55,6 +65,8 @@ class MainScreen(BaseScreen):
 
     def select_path(self, path: str):
         self.path = path
+        if os.path.isdir(self.path):
+            self.app.storage.put('folder_path', path=self.path)
         self.exit_manager()
 
     def exit_manager(self, *args):
@@ -111,87 +123,75 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
 
-    def push(self, field, button):
-        @mainthread
-        def _error_callback(response):
+    def push(self, button):
+        sheet_name = self.app.storage.get('google_sheet_name').get('name')
+        if all([self.app.storage.exists('google_sheet'), sheet_name]):
+            setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
+            setattr(self, 'pool', mp.Pool())
+
+            @mainthread
+            def _error_callback(response):
+                self.press_progress()
+                print(response)
+                print(response.args)
+
+                if type(response.args[0]) is dict:
+                    error_text = response.args[0].get("error")
+                    self.app.open_snackbar(
+                        text=error_text,
+                        md_bg_color="red",
+                        pos_hint={'top': 1},
+                    )
+
+                button.disabled = False
+
+            @mainthread
+            def _callback(response):
+                self.press_progress()
+
+                self.app.open_snackbar(
+                    text='Pushed successfully',
+                    md_bg_color="#17d86e",
+                    pos_hint={'top': 1},
+                )
+
+                button.disabled = False
+
+            try:
+                self.pool.apply_async(func=partial(
+                    self.google_sheet.update,
+                    name_sheet=sheet_name,
+                    data_table=self.table.data),
+                    callback=_callback,
+                    error_callback=_error_callback,
+                )
+            except Exception as error:
+                print(error)
+            finally:
+                self.pool.close()
+
+            button.disabled = True
+
+            for key, val in {'left': 'vertical', 'top': 'horizontal', 'right': 'vertical', 'bottom': 'horizontal'}.items():
+
+                progress_bar = MyProgressBar(
+                    type='determinate',
+                    back_color=self.md_bg_color,
+                    orientation=val,
+                    running_duration=1,
+                    catching_duration=1.5,
+                    pos_hint={key: 1},
+                    size_hint_y=0.005 if val == 'horizontal' else 1,
+                    size_hint_x=0.002 if val == 'vertical' else 1,
+                    edge=key,
+                )
+
+                self.progress_bars.append(progress_bar)
+                self.ids.main_layout.add_widget(progress_bar)
+
             self.press_progress()
-
-            if type(response) == 'dict':
-                field.error = True
-                field.helper_text = response.args[0].get('error')
-
-            button.disabled = False
-
-        @mainthread
-        def _callback_push(response):
-            self.press_progress()
-            self.app.close_dialog(self.app.dialog)
-            self.app.open_snackbar(
-                text='Pushed successfully',
-                md_bg_color="#17d86e",
-                pos_hint={'top': 1},
-            )
-
-        setattr(self, 'pool', mp.Pool())
-
-        try:
-            self.pool.apply_async(func=partial(
-                self.google_sheet.update,
-                name_sheet=field.text,
-                data_table=self.table.data),
-                callback=_callback_push,
-                error_callback=_error_callback,
-            )
-        except Exception as error:
-            print(error)
-        finally:
-            self.pool.close()
-
-        button.disabled = True
-
-        setattr(self, 'progress_bar', MDProgressBar(
-            type="indeterminate",
-            back_color=self.md_bg_color,
-            radius=[30, 30, 30, 30],
-            pos_hint={'top': 1},
-            size_hint_y=.005,
-        ))
-        self.ids.main_layout.add_widget(self.progress_bar)
-
-    def open_push_dialog(self):
-        if self.app.storage.exists('google_sheet'):
-            if not hasattr(self, 'google_sheet'):
-                setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
         else:
             self.open_settings()
-
-        content = MDBoxLayout(
-            orientation='vertical',
-            size_hint_y=None,
-            height="50dp",
-        )
-
-        field = MDTextField(
-            hint_text='sheet name',
-            mode='rectangle',
-            text_color_normal='white',
-            hint_text_color_normal='white',
-            helper_text_mode='on_error',
-        )
-
-        content.add_widget(field)
-
-        button = MDFlatButton(
-            text="push",
-            theme_text_color="Custom",
-            font_style='Button',
-            text_color=self.app.theme_cls.primary_color,
-            on_release=lambda x: (self.push(field=field, button=button), self.press_progress()),
-        )
-
-        self.app.show_dialog(button=button, content=content)
-
-        self.app.dialog.title = 'Enter google sheet name'
 
     def delete_img(self):
         print('delete')
@@ -208,16 +208,19 @@ class SettingsScreen(BaseScreen):
         )
 
     def on_pre_enter(self, *args):
-        if self.app.storage.exists('google_sheet'):
-            self.ids.path_google_sheet.text = self.app.storage.get('google_sheet').get('api_key')
+        self.ids.path_google_sheet.text = self.app.storage.get('google_sheet').get('api_key')
+        self.ids.folder_path.text = self.app.storage.get('folder_path').get('path')
+        self.ids.google_sheet_name.text = self.app.storage.get('google_sheet_name').get('name')
 
-    def file_manager_open(self):
+    def file_manager_open(self, instance):
+        setattr(self, 'cur_field', instance)
         self.file_manager.show(os.path.expanduser("~"))
         self.manager_open = True
         self.file_manager.ext.extend(['.json'])
 
     def select_path(self, path: str):
-        self.ids.path_google_sheet.text = path
+        self.cur_field.text = path
+        delattr(self, 'cur_field')
         self.exit_manager()
 
     def exit_manager(self, *args):
@@ -231,10 +234,15 @@ class SettingsScreen(BaseScreen):
     def save(self):
         path_key = self.ids.path_google_sheet.text
         self.app.storage.put('google_sheet', api_key=path_key)
+        folder_path = self.ids.folder_path.text
+        self.app.storage.put('folder_path', path=folder_path)
+        sheet_name = self.ids.google_sheet_name.text
+        self.app.storage.put('google_sheet_name', name=sheet_name)
+
         self.app.open_snackbar(
-            text='successfully',
+            text='save successfully',
             md_bg_color="#17d86e",
-            pos_hint={'top': 1},
+            pos_hint={'center_x': .5, 'top': 1},
         )
 
 

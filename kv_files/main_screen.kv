@@ -142,7 +142,7 @@
                     size_hint_x: .5
                     disabled: False if table_screen.data_tables.row_data else True
                     on_release:
-                        root.open_push_dialog()
+                        root.push(self)
 
         MDSpinner:
             id: main_spin

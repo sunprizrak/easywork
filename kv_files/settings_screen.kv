@@ -1,6 +1,13 @@
 #:import SettingsScreen screens
 #:import Window kivy.core.window.Window
 
+<LeftLabel@MDLabel>
+    size_hint_x: None
+    width: dp(300)
+    pos_hint: {'center_y': .5}
+    padding_x: dp(30)
+    adaptive_height: True
+
 <SettingsScreen>
     name: 'settings_screen'
     md_bg_color: app.theme_cls.bg_light
@@ -17,43 +24,82 @@
         MDBoxLayout:
             orientation: 'vertical'
             padding: dp(10)
+            spacing: dp(10)
             size_hint_y: None
-            height: Window.height - top_bar.height
+            height: Window.height - top_bar.height - button_box.height
+            pos_hint: {'center_y': .5}
 
             MDBoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
                 spacing: dp(10)
-                padding: [dp(30), 0, 0, 0]
+                adaptive_size: True
+
+                LeftLabel:
+                    text: 'API Key Google Sheet:'
+
+                MDIconButton:
+                    icon: "plus-circle"
+                    theme_text_color: "Custom"
+                    color: 'white'
+                    pos_hint: {'center_y': .5}
+                    on_release:
+                        root.file_manager_open(path_google_sheet)
+
+                MDLabel:
+                    id: path_google_sheet
+                    pos_hint: {'center_y': .5}
+                    adaptive_size: True
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(10)
+                adaptive_size: True
+
+                LeftLabel:
+                    text: 'Folder Path:'
+
+                MDIconButton:
+                    icon: "plus-circle"
+                    theme_text_color: "Custom"
+                    color: 'white'
+                    pos_hint: {'center_y': .5}
+                    on_release:
+                        root.file_manager_open(folder_path)
+
+                MDLabel:
+                    id: folder_path
+                    pos_hint: {'center_y': .5}
+                    adaptive_size: True
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(10)
                 adaptive_height: True
 
-                MDBoxLayout:
-                    orientation: 'horizontal'
-                    spacing: dp(10)
-                    adaptive_height: True
+                LeftLabel:
+                    text: 'Google sheet name:'
 
-                    MDLabel:
-                        text: 'API Key Google Sheet'
-                        adaptive_width: True
-
-                    MDIconButton:
-                        icon: "paperclip"
-                        theme_text_color: "Custom"
-                        color: 'white'
-                        on_release:
-                            root.file_manager_open()
-
-                    MDLabel:
-                        id: path_google_sheet
-                        adaptive_width: True
+                MDTextField:
+                    id: google_sheet_name
+                    mode: 'rectangle'
+                    size_hint_x: None
+                    width: dp(300)
+                    text_color_normal: 'white'
 
             MDWidget:
+
+        MDBoxLayout:
+            id: button_box
+            padding: dp(10)
+            size_hint_x: .3
+            pos_hint: {'center_x': .5}
+            adaptive_height: True
 
             MDRaisedButton:
                 text: "Save"
                 font_style: 'Button'
                 md_bg_color: "green"
-                size_hint_x: .3
-                pos_hint: {'center_x': .5}
+                size_hint_x: 1
                 on_release:
                     root.save()
 

@@ -46,21 +46,23 @@ class GoogleSheet:
                     for row in rows_number:
                         hands_value = worksheet.cell(row, columns[-2]).value
 
-                        if not hands_value or int(val[-2].replace(',', '')) > int(hands_value):
-                            column_range = f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}'
-                            cell_list = worksheet.range(column_range)
+                        if type(hands_value) is str:
+                            if hands_value.replace(',', '').isdigit() and int(val[-2]) < int(hands_value.replace(',', '')):
+                                continue
 
-                            for i, cell in enumerate(cell_list):
-                                cell.value = val[4:][i]
+                        column_range = f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}'
+                        cell_list = worksheet.range(column_range)
 
-                            worksheet.update_cells(cell_list)
+                        for i, cell in enumerate(cell_list):
+                            cell.value = val[4:][i]
+
+                        worksheet.update_cells(cell_list)
 
 
 if __name__ == '__main__':
     gs = GoogleSheet(key='gs_credentials.json')
     gs.auth()
     gs.open('Vladimir_Ocr')
-
 
     # ''' get all lists '''
     # all_worksheets = gs.sheet.worksheets()

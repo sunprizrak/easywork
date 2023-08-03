@@ -1,13 +1,13 @@
 from kivy.clock import Clock
 from kivy.metrics import dp
 from kivymd.app import MDApp
-from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRaisedButton, MDIconButton
 from kivymd.uix.datatables import MDDataTable
-from kivymd.uix.label import MDLabel
+from kivymd.uix.progressbar import MDProgressBar
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.selectioncontrol import MDSwitch
 from kivymd.uix.textfield import MDTextField
+from kivy.properties import StringProperty
 
 
 class BaseScreen(MDScreen):
@@ -233,3 +233,20 @@ class MDData(MDScreen):
 
     def sort_on_team(self, data):
         return zip(*sorted(enumerate(data), key=lambda l: l[1][-1]))
+
+
+class MyProgressBar(MDProgressBar):
+    edge = StringProperty()
+
+    def __init__(self, **kwargs):
+        super(MyProgressBar, self).__init__(**kwargs)
+        self.edge = kwargs.get('edge')
+
+    def _set_default_value(self, interval):
+        self._x = 0
+        self.value = 0
+        if self.edge in ['right', 'bottom']:
+            self.reversed = True
+        else:
+            self.reversed = False
+

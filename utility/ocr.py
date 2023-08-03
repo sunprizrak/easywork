@@ -61,6 +61,8 @@ class Ocr:
             lines = [res[3:7], res[7:11], res[11:]]
             res = res[:3] + lines[0][:2] + [lines[1][0], lines[1][2]] + [lines[2][0]]
 
+        res[-1] = res[-1].replace(',', '')
+
         res.insert(0, path)
 
         now = datetime.datetime.now()
