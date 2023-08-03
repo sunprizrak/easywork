@@ -43,7 +43,6 @@ class MDData(MDScreen):
             ],
             row_data=[],
             rows_num=20,
-            sorted_on="No.",
             sorted_order="ASC",
         )
         self.data_tables.bind(on_row_press=self.on_row_press)
@@ -78,11 +77,11 @@ class MDData(MDScreen):
         '''Called when a table row is clicked.'''
 
         if self.data.get(instance_row.text):
-            key_id = instance_row.text
-            self.app.root.ids.main_screen.ids.screenshot.source = self.data[key_id][0]
+            setattr(self, 'key_id', instance_row.text)
+            self.app.root.ids.main_screen.ids.screenshot.source = self.data[self.key_id][0]
 
             name_columns = [el[0] for el in self.data_tables.column_data[1:-1]]
-            data = list(zip(name_columns, self.data[instance_row.text][1:-1]))
+            data = list(zip(name_columns, self.data[self.key_id][1:-1]))
 
             screen = self.app.root.ids.main_screen
 
@@ -156,20 +155,21 @@ class MDData(MDScreen):
                 switch = SwitchUpdate()
 
                 def _update_row():
-                    old_data = self.data.get(key_id)
+                    old_data = self.data.get(self.key_id)
                     new_data = [widget.text for widget in screen.ids.fields_box.children]
                     new_data.reverse()
                     res_data = [old_data[0]] + new_data + [old_data[-1]]
-                    self.data[key_id] = res_data
+                    self.data[self.key_id] = res_data
 
                     for elem in self.data_tables.row_data:
-                        if key_id == elem[2]:
+                        if self.key_id == elem[2]:
                             self.data_tables.update_row(
                                 elem,
                                 [elem[0], *res_data[1:]]
                             )
 
                     delattr(self, 'data_edit')
+                    delattr(self, 'key_id')
                     switch.active = False
 
                 button_update = MDRaisedButton(
