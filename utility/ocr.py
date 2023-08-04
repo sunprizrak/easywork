@@ -12,6 +12,7 @@ class Ocr:
     @staticmethod
     def reform(data: list, path: str):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
+        print(res)
 
         # remove CT
         for el in res:
@@ -30,34 +31,40 @@ class Ocr:
 
         # id and cut profile with x
         for i, el in enumerate(res):
-            if re.fullmatch('[a-z]{,2}[:;]\d*', el.lower()):
-                for symbl in [':', ';']:
+            if re.fullmatch('.{,2}[:;：]\s{0,}\d*', el.lower()):
+                for symbl in [':', ';', '：']:
                     if symbl in el:
-                        res[i] = el.split(symbl)[1]
+                        res[i] = el.split(symbl)[-1].strip()
                         res = res[i-1:]  # cut profile and x if there
                         break
-            elif re.fullmatch('[a-z]{,2}[:;]\d*[a-z]{,3}[.]\d', el.lower()):
+            elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.]\d', el.lower()):
                 for symbl in [':', ';']:
                     if symbl in el:
-                        res[i] = ''.join([ex for ex in el.split(symbl)[1].split('.')[0] if ex.isdigit()])
+                        res[i] = ''.join([ex for ex in el.split(symbl)[-1].split('.')[0] if ex.isdigit()]).strip()
                         res = res[i-1:]  # cut profile and x if there
                         break
 
-        # Club and % to number
+        # % to number
         for i, el in enumerate(res):
-            if re.fullmatch('\w{4}[:;].*', el.lower()):
-                res[i] = el[5:]
-            elif re.fullmatch('\d*%', el):
-                res[i] = el[:-1]
+            if re.fullmatch('%?\d*%?', el):
+                res[i] = el.replace('%', '').strip()
 
         # remove words
-        for i, el in enumerate(res[3:]):
-            if not el.isdigit() and not re.fullmatch('\d*[,.]\d*', el):
+        for i, el in enumerate(res[2:]):
+            if not el.replace(',', '').isdigit() and not any([let for let in el if let in [';', ':']]):
                 res.remove(el)
+
+        # Club
+        for i, el in enumerate(res):
+            if re.fullmatch('\w{3,}[:;].*', el.lower()):
+                for symbl in [':', ';']:
+                    if symbl in el:
+                        res[i] = el.split(symbl)[-1].strip()
 
         if len(res) < 15:
             res = res[:8]
         else:
+            print(res)
             lines = [res[3:7], res[7:11], res[11:]]
             res = res[:3] + lines[0][:2] + [lines[1][0], lines[1][2]] + [lines[2][0]]
 
@@ -70,6 +77,23 @@ class Ocr:
         res.append(date)
         return res
 
+    def add_data(self, name, folder=False):
+        image_data = getattr(self, 'ocr').ocr(name)
+
+        if folder:
+            path = os.path.join(self.path, name)
+            reform_data = self.reform(image_data, path)
+        else:
+            reform_data = self.reform(image_data, self.path)
+
+        print(reform_data)
+
+        if self.data.get(reform_data[2]):
+            if int(self.data[reform_data[2]][-2].replace(',', '.')) <= int(reform_data[-2].replace(',', '.')):
+                self.data[reform_data[2]] = reform_data
+        else:
+            self.data[reform_data[2]] = reform_data
+
     def main(self, path: str):
         setattr(self, 'path', path)
         setattr(self, 'ocr', PaddleOCR(use_angle_cls=True, show_log=False))
@@ -78,25 +102,14 @@ class Ocr:
             dir_name = os.path.dirname(path)
             file_name = os.path.basename(path)
             os.chdir(path=dir_name)
-            image_data = getattr(self, 'ocr').ocr(file_name)
-            reform_data = self.reform(image_data, self.path)
-            self.data[reform_data[2]] = reform_data
+            self.add_data(name=file_name)
         elif os.path.isdir(self.path):
             os.chdir(path=self.path)
             dir_list = os.listdir(path=self.path)
 
             for el in dir_list:
                 if os.path.isfile(os.path.join(self.path, el)):
-                    image_data = getattr(self, 'ocr').ocr(el)
-                    path = os.path.join(self.path, el)
-                    reform_data = self.reform(image_data, path)
-                    print(reform_data)
-
-                    if self.data.get(reform_data[2]):
-                        if float(self.data[reform_data[2]][-2].replace(',', '.')) <= float(reform_data[-2].replace(',', '.')):
-                            self.data[reform_data[2]] = reform_data
-                    else:
-                        self.data[reform_data[2]] = reform_data
+                    self.add_data(name=el, folder=True)
 
     def __call__(self, path: str):
         self.main(path=path)

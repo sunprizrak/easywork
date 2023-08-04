@@ -75,7 +75,6 @@ class MDData(MDScreen):
 
     def on_row_press(self, instance_table, instance_row):
         '''Called when a table row is clicked.'''
-
         if self.data.get(instance_row.text):
             setattr(self, 'key_id', instance_row.text)
             self.app.root.ids.main_screen.ids.screenshot.source = self.data[self.key_id][0]
