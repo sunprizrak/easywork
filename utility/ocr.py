@@ -12,7 +12,6 @@ class Ocr:
     @staticmethod
     def reform(data: list, path: str):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
-        print(res)
 
         # remove CT
         for el in res:
@@ -64,7 +63,6 @@ class Ocr:
         if len(res) < 15:
             res = res[:8]
         else:
-            print(res)
             lines = [res[3:7], res[7:11], res[11:]]
             res = res[:3] + lines[0][:2] + [lines[1][0], lines[1][2]] + [lines[2][0]]
 
