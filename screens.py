@@ -34,7 +34,8 @@ class MainScreen(BaseScreen):
         self.progress_bars = []
 
     def on_pre_enter(self, *args):
-        self.path = self.app.storage.get('folder_path').get('path')
+        if self.app.storage:
+            self.path = self.app.storage.get('folder_path').get('path')
 
     def on_state(self, instance, value):
         def _start():
@@ -211,9 +212,10 @@ class SettingsScreen(BaseScreen):
         )
 
     def on_pre_enter(self, *args):
-        self.ids.path_google_sheet.text = self.app.storage.get('google_sheet').get('api_key')
-        self.ids.folder_path.text = self.app.storage.get('folder_path').get('path')
-        self.ids.google_sheet_name.text = self.app.storage.get('google_sheet_name').get('name')
+        if self.app.storage:
+            self.ids.path_google_sheet.text = self.app.storage.get('google_sheet').get('api_key')
+            self.ids.folder_path.text = self.app.storage.get('folder_path').get('path')
+            self.ids.google_sheet_name.text = self.app.storage.get('google_sheet_name').get('name')
 
     def file_manager_open(self, instance):
         setattr(self, 'cur_field', instance)
