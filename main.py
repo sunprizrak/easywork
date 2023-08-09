@@ -20,6 +20,7 @@ class CustomThemeManager(ThemeManager):
         })
 
         font_path = 'assets/font/GlossySheenRegular.ttf'
+        print(platform)
 
         if platform == 'windows':
             print('yes windows')
