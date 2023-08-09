@@ -1,3 +1,5 @@
+import os
+
 from kivy.metrics import dp
 from kivy.storage.jsonstore import JsonStore
 from kivymd.app import MDApp
@@ -8,7 +10,6 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
 from kivymd.uix.snackbar import MDSnackbar
-from pathlib import Path
 
 
 class CustomThemeManager(ThemeManager):
@@ -19,7 +20,7 @@ class CustomThemeManager(ThemeManager):
             "Button": ["GlossySheen", 21, True, 1.25],
         })
 
-        font_path = Path('assets/font/GlossySheenRegular.ttf')
+        font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
         print(font_path)
 
         LabelBase.register(name='GlossySheen', fn_regular=font_path)
@@ -35,7 +36,7 @@ class MainApp(MDApp):
         self.dialog = None
 
     def build(self):
-        layout_path = Path('kv_files/layout.kv')
+        layout_path = os.sep.join(['kv_files', 'layout.kv'])
 
         kv_file = Builder.load_file(layout_path)
         return kv_file

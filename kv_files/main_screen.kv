@@ -1,7 +1,7 @@
 #:import MainScreen screens
 #:import Window kivy.core.window.Window
 #:import MDActionBottomAppBarButton kivymd.uix.toolbar.MDActionBottomAppBarButton
-#:import Path pathlib
+#:import os os
 
 
 <MainScreen>
@@ -40,7 +40,7 @@
 
                 Image:
                     id: screenshot
-                    source: Path('assets/img/chost_image.png')'
+                    source: os.sep.join(['assets', 'img', 'chost_image.png'])
                     mipmap: True
 
             MDBoxLayout:
@@ -141,10 +141,9 @@
                     font_style: 'Button'
                     md_bg_color: "blue"
                     size_hint_x: .5
-                    #disabled: False if table_screen.data_tables.row_data else True
+                    disabled: False if table_screen.data_tables.row_data else True
                     on_release:
-                        #root.push(self)
-                        root.table.data_tables.table_data.background_color_cell = 'red'
+                        root.push(self)
 
 
         MDSpinner:
