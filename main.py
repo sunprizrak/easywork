@@ -22,6 +22,7 @@ class CustomThemeManager(ThemeManager):
 
         font_path = os.path.abspath(os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf']))
         print(font_path)
+        print(os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf']))
 
         LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
@@ -37,7 +38,7 @@ class MainApp(MDApp):
 
     def build(self):
         layout_path = os.path.abspath(os.sep.join(['kv_files', 'layout.kv']))
-
+        print(layout_path)
         kv_file = Builder.load_file(layout_path)
         return kv_file
 
