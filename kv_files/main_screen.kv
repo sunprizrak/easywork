@@ -1,7 +1,7 @@
 #:import MainScreen screens
 #:import Window kivy.core.window.Window
 #:import MDActionBottomAppBarButton kivymd.uix.toolbar.MDActionBottomAppBarButton
-#:import os os
+#:import platform platform
 
 
 <MainScreen>
@@ -40,7 +40,7 @@
 
                 Image:
                     id: screenshot
-                    source: os.path.abspath('assets/img/chost_image.png')
+                    source: 'assets/img/chost_image.png'.replace('/', '//') if platform == 'windows' else 'assets/img/chost_image.png'
                     mipmap: True
 
             MDBoxLayout:

@@ -1,4 +1,4 @@
-import os
+from platform import platform
 
 from kivy.metrics import dp
 from kivy.storage.jsonstore import JsonStore
@@ -19,8 +19,13 @@ class CustomThemeManager(ThemeManager):
         self.font_styles.update({
             "Button": ["GlossySheen", 21, True, 1.25],
         })
-        LabelBase.register(name='GlossySheen', fn_regular=os.path.abspath('assets/font/GlossySheenRegular.ttf'))
 
+        font_path = 'assets/font/GlossySheenRegular.ttf'
+
+        if platform == 'windows':
+            font_path = 'assets/font/GlossySheenRegular.ttf'.replace('/', '//')
+
+        LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
 class MainApp(MDApp):
 
