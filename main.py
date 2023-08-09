@@ -1,5 +1,4 @@
-from platform import platform
-
+from kivy.utils import platform
 from kivy.metrics import dp
 from kivy.storage.jsonstore import JsonStore
 from kivymd.app import MDApp
@@ -42,6 +41,7 @@ class MainApp(MDApp):
 
         if platform == 'windows':
             layout_path = layout_path.replace('/', '//')
+
 
         kv_file = Builder.load_file(layout_path)
         return kv_file
