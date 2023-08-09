@@ -1,6 +1,7 @@
 #:import MainScreen screens
 #:import Window kivy.core.window.Window
 #:import MDActionBottomAppBarButton kivymd.uix.toolbar.MDActionBottomAppBarButton
+#:import os os
 
 
 <MainScreen>
@@ -39,7 +40,7 @@
 
                 Image:
                     id: screenshot
-                    source: 'assets/img/chost_image.png'
+                    source: os.path.abspath('assets/img/chost_image.png')
                     mipmap: True
 
             MDBoxLayout:

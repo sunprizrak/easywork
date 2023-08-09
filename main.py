@@ -1,3 +1,5 @@
+import os
+
 from kivy.metrics import dp
 from kivy.storage.jsonstore import JsonStore
 from kivymd.app import MDApp
@@ -17,7 +19,7 @@ class CustomThemeManager(ThemeManager):
         self.font_styles.update({
             "Button": ["GlossySheen", 21, True, 1.25],
         })
-        LabelBase.register(name='GlossySheen', fn_regular='assets/font/GlossySheenRegular.ttf')
+        LabelBase.register(name='GlossySheen', fn_regular=os.path.abspath('assets/font/GlossySheenRegular.ttf'))
 
 
 class MainApp(MDApp):
