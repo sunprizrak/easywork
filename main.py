@@ -27,6 +27,7 @@ class CustomThemeManager(ThemeManager):
 
         LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
+
 class MainApp(MDApp):
 
     def __init__(self, **kwargs):
@@ -37,7 +38,12 @@ class MainApp(MDApp):
         self.dialog = None
 
     def build(self):
-        kv_file = Builder.load_file('kv_files/layout.kv')
+        layout_path = 'kv_files/layout.kv'
+
+        if platform == 'windows':
+            layout_path = layout_path.replace('/', '//')
+
+        kv_file = Builder.load_file(layout_path)
         return kv_file
 
     def open_snackbar(self, **kwargs):
