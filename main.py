@@ -22,10 +22,9 @@ class CustomThemeManager(ThemeManager):
         font_path = 'assets/font/GlossySheenRegular.ttf'
         print(platform)
 
-        if platform == 'windows':
+        if platform == 'win':
             print('yes windows')
             font_path = font_path.replace('/', '//')
-            print(font_path)
 
         print(font_path)
 
@@ -44,7 +43,7 @@ class MainApp(MDApp):
     def build(self):
         layout_path = 'kv_files/layout.kv'
 
-        if platform == 'windows':
+        if platform == 'win':
             layout_path = layout_path.replace('/', '//')
 
 
