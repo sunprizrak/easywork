@@ -22,7 +22,9 @@ class CustomThemeManager(ThemeManager):
         font_path = 'assets/font/GlossySheenRegular.ttf'
 
         if platform == 'windows':
-            font_path = 'assets/font/GlossySheenRegular.ttf'.replace('/', '//')
+            font_path = font_path.replace('/', '//')
+
+        print(font_path)
 
         LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
