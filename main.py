@@ -22,7 +22,9 @@ class CustomThemeManager(ThemeManager):
         font_path = 'assets/font/GlossySheenRegular.ttf'
 
         if platform == 'windows':
+            print('yes windows')
             font_path = font_path.replace('/', '//')
+            print(font_path)
 
         print(font_path)
 
