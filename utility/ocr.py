@@ -84,6 +84,7 @@ class Ocr:
 
 
 if __name__ == '__main__':
+    print('hello __name__ == __main__')
     test_path = '/home/sunprizrak/Изображения/vladimir'
     start = time()
     ocr = Ocr()
