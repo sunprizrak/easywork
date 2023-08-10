@@ -9,6 +9,7 @@ from widgets import BaseScreen, MyProgressBar
 import multiprocessing as mp
 from ocr import Ocr
 
+mp.set_start_method('spawn')
 
 class MainScreen(BaseScreen):
     path = StringProperty()
@@ -76,9 +77,7 @@ class MainScreen(BaseScreen):
             button.text = 'Stop'
             button.md_bg_color = 'red'
 
-            if not hasattr(self, 'pool'):
-                mp.set_start_method('spawn')
-                setattr(self, 'pool', mp.Pool(processes=1))
+            setattr(self, 'pool', mp.Pool(processes=1))
 
             def _callback(response, spin: bool):
                 if spin:
@@ -110,6 +109,7 @@ class MainScreen(BaseScreen):
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
+            delattr(self, 'pool')
 
     def push(self, button):
         sheet_name = self.app.storage.get('google_sheet_name').get('name')
@@ -143,6 +143,9 @@ class MainScreen(BaseScreen):
                 )
 
                 button.disabled = False
+                delattr(self, 'pool')
+
+            setattr(self, 'pool', mp.Pool(processes=1))
 
             self.pool.apply_async(func=partial(
                 self.google_sheet.update,
@@ -235,7 +238,5 @@ class SettingsScreen(BaseScreen):
             md_bg_color="#17d86e",
             pos_hint={'center_x': .5, 'top': 1},
         )
-
-
 
 
