@@ -49,25 +49,25 @@ class MDData(MDScreen):
         self.data_tables.bind(on_check_press=self.on_check_press)
         self.add_widget(self.data_tables)
 
-    def add_row(self, data: dict) -> None:
-        for key, val in data.items():
-            last_num_row = self.count_row
-            try:
-                if self.data.get(key):
-                    if float(self.data[key][-2].replace(',', '.')) <= float(val[-2].replace(',', '.')):
-                        self.data[key] = val
-                        for el in self.data_tables.row_data:
-                            if key in el:
-                                self.data_tables.update_row(
-                                    el,
-                                    [el[0], *val[1:]]
-                                )
-                                break
-                else:
-                    self.data[key] = val
-                    self.data_tables.add_row([str(last_num_row + 1), *val[1:]])
-            except Exception as error:
-                print(error)
+    def add_row(self, data_image: list) -> None:
+        last_num_row = self.count_row
+        user_id = data_image[2]
+
+        if self.data.get(user_id):
+            old_hands = int(self.data[user_id][-2].replace(',', ''))
+            new_hands = int(data_image[2].replace(',', ''))
+
+            if old_hands < new_hands:
+                self.data[user_id] = data_image
+                for el in self.data_tables.row_data:
+                    if user_id in el:
+                        self.data_tables.update_row(el, [el[0], *data_image[1:]])
+        else:
+            self.data[user_id] = data_image
+            self.data_tables.add_row([str(last_num_row + 1), *data_image[1:]])
+
+        print(self.data)
+
 
     @property
     def count_row(self):

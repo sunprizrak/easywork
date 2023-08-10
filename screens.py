@@ -81,43 +81,31 @@ class MainScreen(BaseScreen):
 
     def start(self, button):
         if button.text.lower() == 'start':
+            button.text = 'Stop'
+            button.md_bg_color = 'red'
+
+            if not hasattr(self, 'pool'):
+                setattr(self, 'pool', mp.Pool(processes=1))
+
             def _callback(response):
                 button.text = 'Start'
                 button.md_bg_color = 'green'
                 self.ids.main_spin.active = False
+                self.table.add_row(data_image=response)
 
-                if len(response) > 1:
-                    setattr(self, 'count', 0)
-                    res = [{el[0]: el[1]} for el in response.items()]
-
-                    def __callback(dt):
-                        if self.count == len(res):
-                            delattr(self, 'count')
-                            self.event.cancel()
-                            delattr(self, 'event')
-                        else:
-                            self.table.add_row(data=res[self.count])
-                            self.count += 1
-
-                    setattr(self, 'event', Clock.schedule_interval(
-                        callback=__callback,
-                        timeout=0.5,
-                    ))
-                    self.event()
-                else:
-                    self.table.add_row(data=response)
-
-            button.text = 'Stop'
-            button.md_bg_color = 'red'
-            setattr(self, 'pool', mp.Pool())
-
-            try:
+            if os.path.isfile(self.path):
                 self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=_callback)
                 self.ids.main_spin.active = True
-            except Exception as error:
-                print(error)
-            finally:
-                self.pool.close()
+            elif os.path.isdir(self.path):
+                dir_list = os.listdir(path=self.path)
+
+                for el in dir_list:
+                    path = os.path.join(self.path, el)
+
+                    if os.path.isfile(path):
+                        self.pool.apply_async(func=partial(self.ocr, path=path), callback=_callback)
+                        self.ids.main_spin.active = True
+
         else:
             self.pool.terminate()
             button.text = 'Start'
@@ -128,7 +116,6 @@ class MainScreen(BaseScreen):
         sheet_name = self.app.storage.get('google_sheet_name').get('name')
         if all([self.app.storage.exists('google_sheet'), sheet_name]):
             setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
-            setattr(self, 'pool', mp.Pool())
 
             @mainthread
             def _error_callback(response):
@@ -158,18 +145,13 @@ class MainScreen(BaseScreen):
 
                 button.disabled = False
 
-            try:
-                self.pool.apply_async(func=partial(
-                    self.google_sheet.update,
-                    name_sheet=sheet_name,
-                    data_table=self.table.data),
-                    callback=_callback,
-                    error_callback=_error_callback,
-                )
-            except Exception as error:
-                print(error)
-            finally:
-                self.pool.close()
+            self.pool.apply_async(func=partial(
+                self.google_sheet.update,
+                name_sheet=sheet_name,
+                data_table=self.table.data),
+                callback=_callback,
+                error_callback=_error_callback,
+            )
 
             button.disabled = True
 
