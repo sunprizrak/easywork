@@ -64,7 +64,7 @@ class Ocr:
 
         res[-1] = res[-1].replace(',', '')
 
-        res.insert(0, self.path)
+        res.insert(0, getattr(self, 'path'))
 
         now = datetime.datetime.now()
         date = now.strftime("%d/%m")
@@ -76,6 +76,7 @@ class Ocr:
         paddle_ocr = PaddleOCR(use_angle_cls=True, show_log=False)
         image_data = paddle_ocr.ocr(file_path)
         reform_data = self.reform(image_data)
+        print(f'main: {reform_data}')
         return reform_data
 
     def __call__(self, path: str):
