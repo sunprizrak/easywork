@@ -72,6 +72,7 @@ class Ocr:
         return res
 
     def main(self, file_path: str):
+        print('main: hello')
         setattr(self, 'path', file_path)
         paddle_ocr = PaddleOCR(use_angle_cls=True, show_log=False)
         image_data = paddle_ocr.ocr(file_path)
@@ -80,6 +81,7 @@ class Ocr:
         return reform_data
 
     def __call__(self, path: str):
+        print('call: hello')
         return self.main(file_path=path)
 
 
