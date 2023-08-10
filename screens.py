@@ -1,5 +1,7 @@
 import os
 from functools import partial
+
+from kivy import platform
 from kivy.clock import Clock, mainthread
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
@@ -7,7 +9,7 @@ from kivymd.uix.filemanager import MDFileManager
 from utility.ocr import Ocr
 from utility.google_sheet import GoogleSheet
 from widgets import BaseScreen, MyProgressBar
-import multiprocessing as mp
+from multiprocessing.pool import ThreadPool, Pool
 
 
 class MainScreen(BaseScreen):
@@ -17,8 +19,8 @@ class MainScreen(BaseScreen):
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
-        self.ocr = Ocr()
         self.manager_open = False
+        self.ocr = Ocr()
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
@@ -77,8 +79,10 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'red'
 
             if not hasattr(self, 'pool'):
-                mp.set_start_method('fork')
-                setattr(self, 'pool', mp.Pool(processes=1))
+                if platform == 'win':
+                    setattr(self, 'pool', ThreadPool(processes=1))
+                elif platform == 'linux':
+                    setattr(self, 'pool', Pool(processes=1))
 
             def _callback(response, spin: bool):
                 button.text = 'Start'

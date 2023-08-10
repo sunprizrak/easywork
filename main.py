@@ -1,5 +1,4 @@
 import os
-
 from kivy.metrics import dp
 from kivy.storage.jsonstore import JsonStore
 from kivymd.app import MDApp
