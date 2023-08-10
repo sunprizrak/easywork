@@ -34,9 +34,9 @@ class GoogleSheet:
         for worksheet in all_worksheets:
             data = worksheet.get_all_values()
 
-            patterns = ['vpip', 'pfr', '3\D*bet', 'c\D*bet', 'hands', 'date']
+            patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
 
-            columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())])]
+            columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.fullmatch(pattern, el.lower().replace(' ', ''))])]
 
             if len(columns) == len(patterns):
 
