@@ -1,15 +1,13 @@
 import os
 from functools import partial
-
-from kivy import platform
-from kivy.clock import Clock, mainthread
+from kivy.clock import mainthread
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
 from kivymd.uix.filemanager import MDFileManager
-from utility.ocr import Ocr
-from utility.google_sheet import GoogleSheet
+from google_sheet import GoogleSheet
 from widgets import BaseScreen, MyProgressBar
-from multiprocessing.pool import ThreadPool, Pool
+import multiprocessing as mp
+from ocr import Ocr
 
 
 class MainScreen(BaseScreen):
@@ -79,15 +77,13 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'red'
 
             if not hasattr(self, 'pool'):
-                if platform == 'win':
-                    setattr(self, 'pool', ThreadPool(processes=1))
-                elif platform == 'linux':
-                    setattr(self, 'pool', Pool(processes=1))
+                mp.set_start_method('spawn')
+                setattr(self, 'pool', mp.Pool(processes=1))
 
             def _callback(response, spin: bool):
-                button.text = 'Start'
-                button.md_bg_color = 'green'
                 if spin:
+                    button.text = 'Start'
+                    button.md_bg_color = 'green'
                     self.ids.main_spin.active = False
                 self.table.add_row(data_image=response)
 
@@ -198,9 +194,14 @@ class SettingsScreen(BaseScreen):
 
     def on_pre_enter(self, *args):
         if self.app.storage:
-            self.ids.path_google_sheet.text = self.app.storage.get('google_sheet').get('api_key')
-            self.ids.folder_path.text = self.app.storage.get('folder_path').get('path')
-            self.ids.google_sheet_name.text = self.app.storage.get('google_sheet_name').get('name')
+            if self.app.storage.exists('google_sheet'):
+                self.ids.path_google_sheet.text = self.app.storage['google_sheet'].get('api_key')
+
+            if self.app.storage.exists('folder_path'):
+                self.ids.folder_path.text = self.app.storage['folder_path'].get('path')
+
+            if self.app.storage.exists('google_sheet_name'):
+                self.ids.google_sheet_name.text = self.app.storage['google_sheet_name'].get('name')
 
     def file_manager_open(self, instance):
         setattr(self, 'cur_field', instance)
@@ -234,7 +235,6 @@ class SettingsScreen(BaseScreen):
             md_bg_color="#17d86e",
             pos_hint={'center_x': .5, 'top': 1},
         )
-
 
 
 
