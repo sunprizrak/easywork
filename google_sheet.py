@@ -54,7 +54,7 @@ class GoogleSheet:
                         cell_list = worksheet.range(column_range)
 
                         for i, cell in enumerate(cell_list):
-                            cell.value = val[4:][i]
+                            cell.value = int(val[4:][i])
 
                         worksheet.update_cells(cell_list)
 
