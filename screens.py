@@ -87,24 +87,30 @@ class MainScreen(BaseScreen):
             if not hasattr(self, 'pool'):
                 setattr(self, 'pool', mp.Pool(processes=1))
 
-            def _callback(response):
+            def _callback(response, spin: bool):
                 button.text = 'Start'
                 button.md_bg_color = 'green'
-                self.ids.main_spin.active = False
+                if spin:
+                    self.ids.main_spin.active = False
                 self.table.add_row(data_image=response)
 
             if os.path.isfile(self.path):
-                self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=_callback)
+                self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
                 self.ids.main_spin.active = True
             elif os.path.isdir(self.path):
-                dir_list = os.listdir(path=self.path)
+                file_name_list = [file_name for file_name in os.listdir(path=self.path) if os.path.isfile(os.path.join(self.path, file_name))]
 
-                for el in dir_list:
-                    path = os.path.join(self.path, el)
+                for i, file_name in enumerate(file_name_list):
+                    path = os.path.join(self.path, file_name)
+                    spin = False
 
-                    if os.path.isfile(path):
-                        self.pool.apply_async(func=partial(self.ocr, path=path), callback=_callback)
+                    if i == 0:
                         self.ids.main_spin.active = True
+
+                    if i == len(file_name_list) - 1:
+                        spin = True
+
+                    self.pool.apply_async(func=partial(self.ocr, path=path), callback=partial(_callback, spin=spin))
 
         else:
             self.pool.terminate()
