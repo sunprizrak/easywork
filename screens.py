@@ -77,6 +77,7 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'red'
 
             if not hasattr(self, 'pool'):
+                mp.set_start_method('fork')
                 setattr(self, 'pool', mp.Pool(processes=1))
 
             def _callback(response, spin: bool):
@@ -229,10 +230,6 @@ class SettingsScreen(BaseScreen):
             md_bg_color="#17d86e",
             pos_hint={'center_x': .5, 'top': 1},
         )
-
-
-if __name__ == '__main__':
-    print('hello screens')
 
 
 

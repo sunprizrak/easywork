@@ -36,7 +36,6 @@ class MainApp(MDApp):
 
     def build(self):
         layout_path = os.sep.join(['kv_files', 'layout.kv'])
-        print(layout_path)
         kv_file = Builder.load_file(layout_path)
         return kv_file
 
