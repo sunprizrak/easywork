@@ -12,28 +12,28 @@ class Ocr:
 
         # remove CT
         for el in res:
-            if re.fullmatch('ct\d\d[:;]\d\d', el.lower()):
+            if re.fullmatch('ct\d\d[:;]\d\d', el.lower().replace(' ', '')):
                 res.remove(el)
                 break
 
         # remove LVL
         for el in res:
-            if re.fullmatch('l\D*[.]\d*', el.lower()):
+            if re.fullmatch('l\D*[.]\d*', el.lower().replace(' ', '')):
                 res.remove(el)
                 break
-            elif re.fullmatch('l\D*\d', el.lower()):
+            elif re.fullmatch('l\D*\d', el.lower().replace(' ', '')):
                 res.remove(el)
                 break
 
         # id and cut profile with x
         for i, el in enumerate(res):
-            if re.fullmatch('.{,2}[:;：]\s{0,}\d*', el.lower()):
+            if re.fullmatch('.{,2}[:;：]\s{0,}\d*', el.lower().replace(' ', '')):
                 for symbl in [':', ';', '：']:
                     if symbl in el:
                         res[i] = el.split(symbl)[-1].strip()
                         res = res[i-1:]  # cut profile and x if there
                         break
-            elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.]\d', el.lower()):
+            elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.]\d', el.lower().replace(' ', '')):
                 for symbl in [':', ';']:
                     if symbl in el:
                         res[i] = ''.join([ex for ex in el.split(symbl)[-1].split('.')[0] if ex.isdigit()]).strip()
@@ -42,7 +42,7 @@ class Ocr:
 
         # % to number
         for i, el in enumerate(res):
-            if re.fullmatch('%?\d*%?', el):
+            if re.fullmatch('%?\d*%?', el.replace(' ', '')):
                 res[i] = el.replace('%', '').strip()
 
         # remove words
@@ -52,7 +52,7 @@ class Ocr:
 
         # Club
         for i, el in enumerate(res):
-            if re.fullmatch('\w{3,}[:;].*', el.lower()):
+            if re.fullmatch('\w{3,}[:;].*', el.lower().replace(' ', '')):
                 for symbl in [':', ';']:
                     if symbl in el:
                         res[i] = el.split(symbl)[-1].strip()
