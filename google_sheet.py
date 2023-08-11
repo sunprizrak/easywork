@@ -64,35 +64,3 @@ if __name__ == '__main__':
     gs.auth()
     gs.open('Vladimir_Ocr')
 
-    # ''' get all lists '''
-    # all_worksheets = gs.sheet.worksheets()
-    #
-    # worksheet = all_worksheets[0]
-    # data = worksheet.get_all_values()
-    #
-    # patterns = ['vpip', 'pfr', '3\D*bet', 'c\D*bet', 'hands', 'date']
-    #
-    # columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.search(pattern, el.lower())])]
-    # print(columns)
-    #
-    # if len(columns) == len(patterns):
-    #
-    #     rows_number = [cell.row for cell in worksheet.findall('7690859')]
-    #
-    #     # hands_value = worksheet.cell(rows_number[0], columns[-2]).value
-    #     # print(hands_value)
-    #
-    #
-    #     columns_range = [f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}' for row in rows_number]
-    #     print(columns_range)
-    #
-    #     for el in columns_range:
-    #         cell_list = worksheet.range(el)
-    #
-    #         for cell in cell_list:
-    #             cell.value = '1'
-    #
-    #         worksheet.update_cells(cell_list)
-
-
-
