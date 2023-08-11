@@ -80,11 +80,14 @@ class MainScreen(BaseScreen):
             setattr(self, 'pool', mp.Pool(processes=1))
 
             def _callback(response, spin: bool):
+                self.table.add_row(data_image=response)
+
                 if spin:
                     button.text = 'Start'
                     button.md_bg_color = 'green'
                     self.ids.main_spin.active = False
-                self.table.add_row(data_image=response)
+                    self.pool.close()
+                    delattr(self, 'pool')
 
             if os.path.isfile(self.path):
                 self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
@@ -109,6 +112,7 @@ class MainScreen(BaseScreen):
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
+            self.pool.close()
             delattr(self, 'pool')
 
     def push(self, button):
@@ -131,6 +135,8 @@ class MainScreen(BaseScreen):
                     )
 
                 button.disabled = False
+                self.pool.close()
+                delattr(self, 'pool')
 
             @mainthread
             def _callback(response):
@@ -144,6 +150,7 @@ class MainScreen(BaseScreen):
                 )
 
                 button.disabled = False
+                self.pool.close()
                 delattr(self, 'pool')
 
             setattr(self, 'pool', mp.Pool(processes=1))
