@@ -84,7 +84,6 @@ class MainScreen(BaseScreen):
                     button.text = 'Start'
                     button.md_bg_color = 'green'
                     self.ids.main_spin.active = False
-                print(f'response: {response}')
                 self.table.add_row(data_image=response)
 
             if os.path.isfile(self.path):

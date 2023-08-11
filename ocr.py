@@ -8,6 +8,7 @@ class Ocr:
 
     def reform(self, data: list):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
+        print(f'res: {res}')
 
         # remove CT
         for el in res:
@@ -75,7 +76,6 @@ class Ocr:
         setattr(self, 'path', file_path)
         paddle_ocr = PaddleOCR(use_angle_cls=True, show_log=False)
         image_data = paddle_ocr.ocr(file_path)
-        print(f'image_data: {image_data}')
         reform_data = self.reform(image_data)
         print(f'reform_data: {reform_data}')
         print('-------------------------------------------------------------------------------')
