@@ -135,6 +135,7 @@ class MainScreen(BaseScreen):
             @mainthread
             def _callback(response):
                 self.press_progress()
+                self.ids.main_spin.active = False
 
                 self.app.open_snackbar(
                     text='Pushed successfully',
@@ -155,6 +156,7 @@ class MainScreen(BaseScreen):
                 error_callback=_error_callback,
             )
 
+            self.ids.main_spin.active = True
             button.disabled = True
 
             for key, val in {'left': 'vertical', 'top': 'horizontal', 'right': 'vertical', 'bottom': 'horizontal'}.items():
