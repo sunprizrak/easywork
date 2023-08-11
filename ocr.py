@@ -57,6 +57,9 @@ class Ocr:
                     if symbl in el:
                         res[i] = el.split(symbl)[-1].strip()
 
+        print(len(res))
+        print(f'<>: {res}')
+
         if len(res) < 15:
             res = res[:8]
         else:
