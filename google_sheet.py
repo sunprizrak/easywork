@@ -33,6 +33,7 @@ class GoogleSheet:
 
         for worksheet in all_worksheets:
             data = worksheet.get_all_values()
+            print(f'worksheet: {worksheet}')
 
             patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
 
@@ -57,6 +58,7 @@ class GoogleSheet:
                             cell.value = int(val[4:][i]) if '/' not in val[4:][i] else val[4:][i]
 
                         worksheet.update_cells(cell_list)
+                        print(f'update: {worksheet}')
 
 
 if __name__ == '__main__':
