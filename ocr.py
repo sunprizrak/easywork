@@ -60,7 +60,7 @@ class Ocr:
         print(len(res))
         print(f'<>: {res}')
 
-        if len(res) < 1:
+        if len(res) < 14:
             res = res[:8]
         else:
             lines = [res[3:7], res[7:11], res[11:]]
