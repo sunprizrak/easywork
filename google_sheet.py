@@ -15,6 +15,7 @@ class GoogleSheet:
                  "https://www.googleapis.com/auth/drive"]
         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.key, scope)
         setattr(self, 'client', gspread.authorize(credentials))
+        print('hello')
 
     def open(self, name_sheet: str):
         if getattr(self, 'client'):
