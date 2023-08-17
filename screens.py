@@ -20,6 +20,7 @@ class MainScreen(BaseScreen):
         super(MainScreen, self).__init__(**kwargs)
         self.manager_open = False
         self.ocr = Ocr()
+        self.pool = mp.Pool(processes=1)
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
@@ -77,8 +78,6 @@ class MainScreen(BaseScreen):
             button.text = 'Stop'
             button.md_bg_color = 'red'
 
-            setattr(self, 'pool', mp.Pool(processes=3))
-
             def _callback(response, spin: bool):
                 self.table.add_row(data_image=response)
 
@@ -86,8 +85,6 @@ class MainScreen(BaseScreen):
                     button.text = 'Start'
                     button.md_bg_color = 'green'
                     self.ids.main_spin.active = False
-                    self.pool.close()
-                    delattr(self, 'pool')
 
             if os.path.isfile(self.path):
                 self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
@@ -109,11 +106,11 @@ class MainScreen(BaseScreen):
 
         else:
             self.pool.terminate()
+            self.pool.close()
+            self.pool = mp.Pool(processes=1)
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
-            self.pool.close()
-            delattr(self, 'pool')
 
     def push(self, button):
         sheet_name = self.app.storage.get('google_sheet_name').get('name')
@@ -135,8 +132,6 @@ class MainScreen(BaseScreen):
                     )
 
                 button.disabled = False
-                self.pool.close()
-                delattr(self, 'pool')
 
             @mainthread
             def _callback(response):
@@ -150,10 +145,6 @@ class MainScreen(BaseScreen):
                 )
 
                 button.disabled = False
-                self.pool.close()
-                delattr(self, 'pool')
-
-            setattr(self, 'pool', mp.Pool(processes=1))
 
             self.pool.apply_async(func=partial(
                 self.google_sheet.update,

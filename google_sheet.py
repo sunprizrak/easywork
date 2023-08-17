@@ -43,7 +43,6 @@ class GoogleSheet:
 
                 for key, val in data_table.items():
                     rows_number = [cell.row for cell in worksheet.findall(key)]
-                    print(rows_number)
 
                     for row in rows_number:
                         hands_value = worksheet.cell(row, columns[-2]).value
