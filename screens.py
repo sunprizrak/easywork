@@ -133,11 +133,13 @@ class MainScreen(BaseScreen):
                     )
 
                 button.disabled = False
+                print(f'count: {self.google_sheet.count}')
 
             @mainthread
             def _callback(response):
                 self.press_progress()
                 self.ids.main_spin.active = False
+                print(f'count: {self.google_sheet.count}')
 
                 self.app.open_snackbar(
                     text='Pushed successfully',
