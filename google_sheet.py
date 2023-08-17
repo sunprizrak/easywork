@@ -34,7 +34,6 @@ class GoogleSheet:
         for worksheet in all_worksheets:
             data = worksheet.get_all_values()
             print(f'worksheet: {worksheet}')
-            print(f'data: {data}')
 
             patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
 
