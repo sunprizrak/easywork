@@ -21,7 +21,6 @@ class GoogleSheet:
             self.sheet = getattr(self, 'client').open(name_sheet)
 
     def update(self, name_sheet: str, data_table: dict):
-        print(f'data_table: {data_table}')
         self.auth()
 
         try:
@@ -43,10 +42,13 @@ class GoogleSheet:
             if len(columns) == len(patterns):
 
                 for key, val in data_table.items():
+                    print('level 1')
                     rows_number = [cell.row for cell in worksheet.findall(key)]
+                    print('level 2')
 
                     for row in rows_number:
                         hands_value = worksheet.cell(row, columns[-2]).value
+                        print('level 3')
 
                         if type(hands_value) is str:
                             if hands_value.replace(',', '').isdigit() and int(val[-2]) < int(hands_value.replace(',', '')):
@@ -56,7 +58,9 @@ class GoogleSheet:
                         cell_list = worksheet.range(column_range)
 
                         for i, cell in enumerate(cell_list):
+                            print('lelvel 4')
                             cell.value = int(val[4:][i]) if '/' not in val[4:][i] else val[4:][i]
+                            print('level 5')
 
                         worksheet.update_cells(cell_list)
                         print(f'update: {worksheet}')
