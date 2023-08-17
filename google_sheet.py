@@ -60,7 +60,7 @@ class GoogleSheet:
 
                         worksheet.update_cells(cell_list)
                         print(f'update: {worksheet}')
-            time.sleep(1)
+            time.sleep(3)
 
 
 if __name__ == '__main__':
