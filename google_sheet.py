@@ -32,38 +32,40 @@ class GoogleSheet:
         all_worksheets = self.sheet.worksheets()
 
         for worksheet in all_worksheets:
-            data = worksheet.get_all_values()
-            print(f'worksheet: {worksheet}')
+            try:
+                data = worksheet.get_all_values()
+                print(f'worksheet: {worksheet}')
 
-            patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
+                patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
 
-            columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.fullmatch(pattern, el.lower().replace(' ', ''))])]
+                columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.fullmatch(pattern, el.lower().replace(' ', ''))])]
 
-            if len(columns) == len(patterns):
+                if len(columns) == len(patterns):
 
-                for key, val in data_table.items():
-                    rows_number = [cell.row for cell in worksheet.findall(key)]
+                    for key, val in data_table.items():
+                        rows_number = [cell.row for cell in worksheet.findall(key)]
 
-                    for row in rows_number:
-                        hands_value = worksheet.cell(row, columns[-2]).value
+                        for row in rows_number:
+                            hands_value = worksheet.cell(row, columns[-2]).value
 
-                        if type(hands_value) is str:
-                            if hands_value.replace(',', '').isdigit() and int(val[-2]) < int(hands_value.replace(',', '')):
-                                continue
+                            if type(hands_value) is str:
+                                if hands_value.replace(',', '').isdigit() and int(val[-2]) < int(hands_value.replace(',', '')):
+                                    continue
 
-                        column_range = f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}'
-                        cell_list = worksheet.range(column_range)
+                            column_range = f'{rowcol_to_a1(row, columns[0])}:{rowcol_to_a1(row, columns[-1])}'
+                            cell_list = worksheet.range(column_range)
 
-                        for i, cell in enumerate(cell_list):
-                            cell.value = int(val[4:][i]) if '/' not in val[4:][i] else val[4:][i]
+                            for i, cell in enumerate(cell_list):
+                                cell.value = int(val[4:][i]) if '/' not in val[4:][i] else val[4:][i]
 
-                        worksheet.update_cells(cell_list)
-                        print(f'update: {worksheet}')
+                            worksheet.update_cells(cell_list)
+                            print(f'update: {worksheet}')
+            except gspread.exceptions as error:
+                print(error)
 
 
 if __name__ == '__main__':
     gs = GoogleSheet(key='gs_credentials.json')
     gs.auth()
     gs.open('Vladimir_Ocr')
-    print('hello')
 
