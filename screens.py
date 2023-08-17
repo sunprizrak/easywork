@@ -78,6 +78,7 @@ class MainScreen(BaseScreen):
             button.md_bg_color = 'red'
 
             setattr(self, 'pool', mp.Pool(processes=mp.cpu_count()))
+            print(mp.cpu_count())
 
             def _callback(response, spin: bool):
                 self.table.add_row(data_image=response)
