@@ -11,6 +11,7 @@ from ocr import Ocr
 
 mp.set_start_method('spawn')
 
+
 class MainScreen(BaseScreen):
     path = StringProperty()
     table = ObjectProperty()
@@ -20,7 +21,7 @@ class MainScreen(BaseScreen):
         super(MainScreen, self).__init__(**kwargs)
         self.manager_open = False
         self.ocr = Ocr()
-        self.pool = mp.Pool(processes=1)
+        self.pool = mp.Pool()
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
