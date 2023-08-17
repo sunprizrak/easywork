@@ -77,7 +77,7 @@ class MainScreen(BaseScreen):
             button.text = 'Stop'
             button.md_bg_color = 'red'
 
-            setattr(self, 'pool', mp.Pool(processes=1))
+            setattr(self, 'pool', mp.Pool(processes=3))
 
             def _callback(response, spin: bool):
                 self.table.add_row(data_image=response)
