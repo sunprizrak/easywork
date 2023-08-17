@@ -60,7 +60,7 @@ class GoogleSheet:
 
                             worksheet.update_cells(cell_list)
                             print(f'update: {worksheet}')
-            except gspread.exceptions as error:
+            except Exception as error:
                 print(error)
                 print(worksheet)
 
