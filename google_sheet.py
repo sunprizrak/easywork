@@ -74,6 +74,7 @@ class GoogleSheet:
             except Exception as error:
                 print(error)
                 print(worksheet)
+        print(self.count)
 
 
 if __name__ == '__main__':
