@@ -77,8 +77,7 @@ class MainScreen(BaseScreen):
             button.text = 'Stop'
             button.md_bg_color = 'red'
 
-            setattr(self, 'pool', mp.Pool(processes=mp.cpu_count()))
-            print(mp.cpu_count())
+            setattr(self, 'pool', mp.Pool(processes=3))
 
             def _callback(response, spin: bool):
                 self.table.add_row(data_image=response)
@@ -154,7 +153,7 @@ class MainScreen(BaseScreen):
                 self.pool.close()
                 delattr(self, 'pool')
 
-            setattr(self, 'pool', mp.Pool(processes=mp.cpu_count()))
+            setattr(self, 'pool', mp.Pool(processes=3))
 
             self.pool.apply_async(func=partial(
                 self.google_sheet.update,
