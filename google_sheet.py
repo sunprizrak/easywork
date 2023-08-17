@@ -62,6 +62,7 @@ class GoogleSheet:
                             print(f'update: {worksheet}')
             except gspread.exceptions as error:
                 print(error)
+                print(worksheet)
 
 
 if __name__ == '__main__':
