@@ -40,19 +40,19 @@ class GoogleSheet:
         for worksheet in all_worksheets:
             try:
                 print(f'worksheet: {worksheet}')
-
+                data = worksheet.get_all_values()
+                self.count += 1
                 patterns = ['vpipovrll', 'pfrovrll', '3\D*betovrll', 'c\D*betovrll', 'handsovrll', 'dateovrll']
 
-                for key, val in data_table.items():
-                    rows_number = [cell.row for cell in worksheet.findall(key)]
-                    self.count += 1
+                columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.fullmatch(pattern, el.lower().replace(' ', ''))])]
 
-                    if len(rows_number) > 0:
-                        data = worksheet.get_all_values()
+                if len(columns) == len(patterns):
+
+                    for key, val in data_table.items():
+                        rows_number = [cell.row for cell in worksheet.findall(key)]
                         self.count += 1
-                        columns = [max(walrus) for pattern in patterns if (walrus := [i for i, el in enumerate(data[0], 1) if re.fullmatch(pattern, el.lower().replace(' ', ''))])]
 
-                        if len(columns) == len(patterns):
+                        if len(rows_number) > 0:
                             for row in rows_number:
                                 hands_value = worksheet.cell(row, columns[-2]).value
                                 self.count += 1
