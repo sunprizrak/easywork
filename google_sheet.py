@@ -1,4 +1,5 @@
 import re
+import time
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread.utils import rowcol_to_a1
@@ -59,6 +60,7 @@ class GoogleSheet:
 
                         worksheet.update_cells(cell_list)
                         print(f'update: {worksheet}')
+            time.sleep(1)
 
 
 if __name__ == '__main__':
