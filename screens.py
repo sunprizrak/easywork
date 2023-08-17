@@ -119,20 +119,19 @@ class MainScreen(BaseScreen):
 
             @mainthread
             def _error_callback(response):
-                # self.press_progress()
-                # print(response)
-                # print(response.args)
-                #
-                # if type(response.args[0]) is dict:
-                #     error_text = response.args[0].get("error")
-                #     self.app.open_snackbar(
-                #         text=error_text,
-                #         md_bg_color="red",
-                #         pos_hint={'top': 1},
-                #     )
-                #
-                # button.disabled = False
+                self.press_progress()
                 print(response)
+                print(response.args)
+
+                if type(response.args[0]) is dict:
+                    error_text = response.args[0].get("error")
+                    self.app.open_snackbar(
+                        text=error_text,
+                        md_bg_color="red",
+                        pos_hint={'top': 1},
+                    )
+
+                button.disabled = False
 
             @mainthread
             def _callback(response):

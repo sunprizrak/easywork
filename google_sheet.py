@@ -65,4 +65,5 @@ if __name__ == '__main__':
     gs = GoogleSheet(key='gs_credentials.json')
     gs.auth()
     gs.open('Vladimir_Ocr')
+    print('hello')
 
