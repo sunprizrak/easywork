@@ -74,7 +74,9 @@ class GoogleSheet:
             except Exception as error:
                 print(error)
                 print(worksheet)
-            time.sleep(len(data_table) + 3)
+
+            if len(data_table) > 1:
+                time.sleep(len(data_table) + 3)
         print(self.count)
 
 
