@@ -34,6 +34,7 @@ if __name__ == '__main__':
             self.dialog = None
 
         def build(self):
+            self.icon = 'avatar.ico'
             layout_path = os.sep.join(['kv_files', 'layout.kv'])
             kv_file = Builder.load_file(layout_path)
             return kv_file
