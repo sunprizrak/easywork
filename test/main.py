@@ -1,10 +1,10 @@
 from kivy.lang import Builder
-from kivy.app import App
+from kivymd.app import MDApp
 import os, sys
 from kivy.resources import resource_add_path, resource_find
 
 
-class MainApp(App):
+class MainApp(MDApp):
 
     def build(self):
         kiv_file = Builder.load_file('main.kv')
