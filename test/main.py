@@ -1,8 +1,8 @@
 from kivy.lang import Builder
-from kivymd.app import MDApp
+from kivy.app import App
 
 
-class MainApp(MDApp):
+class MainApp(App):
 
     def build(self):
         kiv_file = Builder.load_file('main.kv')
