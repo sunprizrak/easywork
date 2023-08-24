@@ -2,23 +2,10 @@ from kivy.lang import Builder
 from kivy.app import App
 
 
-KV = '''
-Screen:
-
-    BoxLayout:
-        canvas:
-            Color:
-                rgba: .3, .3, .3, 1
-            Rectangle:
-                size: self.size
-                pos: self.pos
-'''
-
-
 class MainApp(App):
 
     def build(self):
-        kiv_file = Builder.load_string(KV)
+        kiv_file = Builder.load_file('main.kv')
         return kiv_file
 
 
