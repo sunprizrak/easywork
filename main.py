@@ -1,7 +1,6 @@
 
 if __name__ == '__main__':
     import os
-    import sys
     from kivy.metrics import dp
     from kivy.storage.jsonstore import JsonStore
     from kivymd.app import MDApp
@@ -12,13 +11,6 @@ if __name__ == '__main__':
     from kivymd.uix.dialog import MDDialog
     from kivymd.uix.label import MDLabel
     from kivymd.uix.snackbar import MDSnackbar
-
-    if sys.__stdout__ is None or sys.__stderr__ is None:
-        os.environ['KIVY_NO_CONSOLELOG'] = '1'
-    from kivy.resources import resource_add_path, resource_find
-
-    if hasattr(sys, '_MEIPASS'):
-        resource_add_path(os.path.join(sys._MEIPASS))
 
     class CustomThemeManager(ThemeManager):
         def __init__(self, **kwargs):
