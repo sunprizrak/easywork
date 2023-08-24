@@ -7,6 +7,7 @@ from kivy.resources import resource_add_path, resource_find
 class MainApp(MDApp):
 
     def build(self):
+        self.icon = 'icon.ico'
         kiv_file = Builder.load_file('main.kv')
         return kiv_file
 
