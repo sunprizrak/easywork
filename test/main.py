@@ -1,21 +1,15 @@
 from kivy.lang import Builder
-from kivy.app import App
+from kivymd.app import MDApp
 
 
 KV = '''
-Screen:
-
-    BoxLayout:
-        canvas:
-            Color:
-                rgba: .3, .3, .3, 1
-            Rectangle:
-                size: self.size
-                pos: self.pos
+MDScreen:
+    MDBoxLayout:
+        md_bg_color: 'green'
 '''
 
 
-class MainApp(App):
+class MainApp(MDApp):
 
     def build(self):
         kiv_file = Builder.load_string(KV)
