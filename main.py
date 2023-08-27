@@ -20,9 +20,9 @@ if __name__ == '__main__':
                 "Button": ["GlossySheen", 21, True, 1.25],
             })
 
-            font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
+            # font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
 
-            LabelBase.register(name='GlossySheen', fn_regular=font_path)
+            # LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
 
     class MainApp(MDApp):
