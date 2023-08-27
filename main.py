@@ -20,9 +20,14 @@ if __name__ == '__main__':
                 "Button": ["GlossySheen", 21, True, 1.25],
             })
 
-            # font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
+            if os.path.exists(os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])):
+                print('Такой файл существует !!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            else:
+                print('Такоей файл не существует !!!!!!!!!!!!!!!!!!!!!!!!!')
 
-            # LabelBase.register(name='GlossySheen', fn_regular=font_path)
+            font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
+
+            LabelBase.register(name='GlossySheen', fn_regular=font_path)
 
 
     class MainApp(MDApp):
