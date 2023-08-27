@@ -3,7 +3,7 @@ from functools import partial
 from kivy.clock import mainthread
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import FallOutTransition, RiseInTransition
-from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.filemanager.filemanager import MDFileManager
 from google_sheet import GoogleSheet
 from widgets import BaseScreen, MyProgressBar
 import multiprocessing as mp
