@@ -25,16 +25,6 @@ if __name__ == '__main__':
                 "Button": ["GlossySheen", 21, True, 1.25],
             })
 
-            current_path = os.getcwd()
-            print(current_path)
-            print(os.sep.join([current_path, 'assets', 'font', 'GlossySheenRegular.ttf']))
-            os.listdir(current_path)
-
-            if os.path.exists(os.sep.join([current_path, 'assets', 'font', 'GlossySheenRegular.ttf'])):
-                print('Такой файл существует !!!!!!!!!!!!!!!!!!!!!!!!!!!')
-            else:
-                print('Такоей файл не существует !!!!!!!!!!!!!!!!!!!!!!!!!')
-
             font_path = os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])
 
             LabelBase.register(name='GlossySheen', fn_regular=font_path)
