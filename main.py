@@ -20,9 +20,12 @@ if __name__ == '__main__':
                 "Button": ["GlossySheen", 21, True, 1.25],
             })
 
-            print(os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf']))
+            current_path = os.getcwd()
+            print(current_path)
+            print(os.sep.join([current_path, 'assets', 'font', 'GlossySheenRegular.ttf']))
+            os.listdir(current_path)
 
-            if os.path.exists(os.sep.join(['assets', 'font', 'GlossySheenRegular.ttf'])):
+            if os.path.exists(os.sep.join([current_path, 'assets', 'font', 'GlossySheenRegular.ttf'])):
                 print('Такой файл существует !!!!!!!!!!!!!!!!!!!!!!!!!!!')
             else:
                 print('Такоей файл не существует !!!!!!!!!!!!!!!!!!!!!!!!!')
