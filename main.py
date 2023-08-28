@@ -1,5 +1,6 @@
 
 if __name__ == '__main__':
+    import multiprocessing as mp
     import os
     import sys
     from kivy.resources import resource_add_path, resource_find
@@ -16,6 +17,7 @@ if __name__ == '__main__':
 
     if hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
+
 
     class CustomThemeManager(ThemeManager):
         def __init__(self, **kwargs):
@@ -78,4 +80,6 @@ if __name__ == '__main__':
         def close_dialog(self, inst):
             self.dialog.dismiss()
 
+
+    mp.freeze_support()
     MainApp().run()

@@ -108,7 +108,7 @@ class MainScreen(BaseScreen):
         else:
             self.pool.terminate()
             self.pool.close()
-            self.pool = mp.Pool(processes=1)
+            self.pool = mp.Pool()
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
