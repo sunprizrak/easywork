@@ -1,6 +1,8 @@
+import multiprocessing as mp
 
 if __name__ == '__main__':
-    import multiprocessing as mp
+    mp.freeze_support()
+
     import os
     import sys
     from kivy.resources import resource_add_path, resource_find
@@ -80,6 +82,4 @@ if __name__ == '__main__':
         def close_dialog(self, inst):
             self.dialog.dismiss()
 
-
-    mp.freeze_support()
     MainApp().run()
