@@ -87,6 +87,10 @@ class MainScreen(BaseScreen):
                     button.md_bg_color = 'green'
                     self.ids.main_spin.active = False
 
+            def _error_callback(response):
+                print(response)
+                print(response.args)
+
             if os.path.isfile(self.path):
                 self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
                 self.ids.main_spin.active = True
@@ -103,7 +107,7 @@ class MainScreen(BaseScreen):
                     if i == len(file_name_list) - 1:
                         spin = True
 
-                    self.pool.apply_async(func=partial(self.ocr, path=path), callback=partial(_callback, spin=spin))
+                    self.pool.apply_async(func=partial(self.ocr, path=path), callback=partial(_callback, spin=spin), error_callback=_error_callback)
 
         else:
             self.pool.terminate()
