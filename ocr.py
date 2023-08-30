@@ -7,6 +7,7 @@ import re
 
 class Ocr:
     model_path = os.sep.join(['ch_PP-OCRv4_rec_infer'])
+
     def reform(self, data: list):
         res = list(map(str.strip, [el[1][0] for el in data[0]]))
         print(f'res: {res}')
@@ -78,7 +79,7 @@ class Ocr:
 
     def main(self, file_path: str):
         setattr(self, 'path', file_path)
-        paddle_ocr = PaddleOCR(use_angle_cls=True, show_log=False, Rec_model_dir=self.model_path)
+        paddle_ocr = PaddleOCR(use_angle_cls=True, show_log=False, Rec_model_dir=self.model_path, use_gpu=False)
         image_data = paddle_ocr.ocr(file_path)
         reform_data = self.reform(image_data)
         print(f'reform_data: {reform_data}')
