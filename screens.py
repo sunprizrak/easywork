@@ -88,7 +88,6 @@ class MainScreen(BaseScreen):
                     self.ids.main_spin.active = False
 
             if os.path.isfile(self.path):
-                print(self.path)
                 self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
                 self.ids.main_spin.active = True
             elif os.path.isdir(self.path):
@@ -104,7 +103,6 @@ class MainScreen(BaseScreen):
                     if i == len(file_name_list) - 1:
                         spin = True
 
-                    print(path)
                     self.pool.apply_async(func=partial(self.ocr, path=path), callback=partial(_callback, spin=spin))
 
         else:
