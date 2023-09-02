@@ -21,7 +21,7 @@ class MainScreen(BaseScreen):
         super(MainScreen, self).__init__(**kwargs)
         self.manager_open = False
         self.ocr = Ocr()
-        self.pool = mp.Pool(processes=3)
+        self.pool = mp.Pool(processes=1)
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
@@ -112,7 +112,7 @@ class MainScreen(BaseScreen):
         else:
             self.pool.terminate()
             self.pool.close()
-            self.pool = mp.Pool(processes=3)
+            self.pool = mp.Pool(processes=1)
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
