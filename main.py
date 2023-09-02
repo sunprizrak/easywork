@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
             if platform == 'win':
                 user_path = shell.SHGetKnownFolderPath(shellcon.FOLDERID_Profile)
-                store_path = os.path.join([user_path, self.title, 'storage.json'])
+                store_path = os.path.join(user_path, self.title, 'storage.json')
                 self.storage = JsonStore(store_path)
             else:
                 self.storage = JsonStore('storage.json')
