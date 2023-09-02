@@ -35,7 +35,7 @@ class Ocr:
                         res[i] = el.split(symbl)[-1].strip()
                         res = res[i-1:]  # cut profile and x if there
                         break
-            elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.]\d*', el.lower().replace(' ', '')):
+            elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.,]\d*', el.lower().replace(' ', '')):
                 for symbl in [':', ';']:
                     if symbl in el:
                         res[i] = ''.join([ex for ex in el.split(symbl)[-1].split('.')[0] if ex.isdigit()]).strip()
