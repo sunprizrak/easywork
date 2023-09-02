@@ -1,5 +1,7 @@
 import multiprocessing as mp
 
+from kivy import platform
+
 if __name__ == '__main__':
     mp.freeze_support()
 
@@ -16,6 +18,9 @@ if __name__ == '__main__':
     from kivymd.uix.dialog import MDDialog
     from kivymd.uix.label import MDLabel
     from kivymd.uix.snackbar import MDSnackbar
+
+    if platform == 'win':
+        from win32com.shell import shell, shellcon
 
     if hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
@@ -40,7 +45,14 @@ if __name__ == '__main__':
             super(MainApp, self).__init__(**kwargs)
             self.title = 'EasyWork'
             self.theme_cls = CustomThemeManager()
-            self.storage = JsonStore('storage.json')
+
+            if platform == 'win':
+                user_path = shell.SHGetKnownFolderPath(shellcon.FOLDERID_Profile)
+                store_path = os.path.join([user_path, self.title, 'storage.json'])
+                self.storage = JsonStore(store_path)
+            else:
+                self.storage = JsonStore('storage.json')
+
             self.dialog = None
 
         def build(self):
