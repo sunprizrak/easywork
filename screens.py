@@ -7,6 +7,7 @@ from kivymd.uix.filemanager import MDFileManager
 from google_sheet import GoogleSheet
 from widgets import BaseScreen, MyProgressBar
 from ocr import Ocr
+import multiprocessing as mp
 
 
 class MainScreen(BaseScreen):
@@ -17,7 +18,7 @@ class MainScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         self.manager_open = False
-        self.ocr = Ocr()
+        self.pool = mp.Pool(processes=3)
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
@@ -87,8 +88,10 @@ class MainScreen(BaseScreen):
                 print(response)
                 print(response.args)
 
+            ocr = Ocr()
+
             if os.path.isfile(self.path):
-                #self.pool.apply_async(func=partial(self.ocr, path=self.path), callback=partial(_callback, spin=True))
+                self.pool.apply_async(func=partial(ocr, path=self.path), callback=partial(_callback, spin=True))
                 self.ids.main_spin.active = True
             elif os.path.isdir(self.path):
                 file_name_list = [file_name for file_name in os.listdir(path=self.path) if os.path.isfile(os.path.join(self.path, file_name))]
@@ -103,12 +106,11 @@ class MainScreen(BaseScreen):
                     if i == len(file_name_list) - 1:
                         spin = True
 
-                    #self.pool.apply_async(func=partial(self.ocr, path=path), callback=partial(_callback, spin=spin), error_callback=_error_callback)
-
+                    self.pool.apply_async(func=partial(ocr, path=path), callback=partial(_callback, spin=spin), error_callback=_error_callback)
         else:
             self.pool.terminate()
             self.pool.close()
-            #self.pool = mp.Pool(processes=3)
+            self.pool = mp.Pool(processes=3)
             button.text = 'Start'
             button.md_bg_color = 'green'
             self.ids.main_spin.active = False
@@ -147,13 +149,13 @@ class MainScreen(BaseScreen):
 
                 button.disabled = False
 
-            # self.pool.apply_async(func=partial(
-            #     self.google_sheet.update,
-            #     name_sheet=sheet_name,
-            #     data_table=self.table.data),
-            #     callback=_callback,
-            #     error_callback=_error_callback,
-            # )
+            self.pool.apply_async(func=partial(
+                self.google_sheet.update,
+                name_sheet=sheet_name,
+                data_table=self.table.data),
+                callback=_callback,
+                error_callback=_error_callback,
+            )
 
             self.ids.main_spin.active = True
             button.disabled = True

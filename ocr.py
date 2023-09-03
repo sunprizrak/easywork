@@ -94,6 +94,6 @@ if __name__ == '__main__':
     test_path = '/home/sunprizrak/Изображения/vladimir'
     start = time()
     ocr = Ocr()
-    ocr(path=test_path)
+    ocr(test_path)
     print(f"Время затраченное на работу: {time() - start}")
 
