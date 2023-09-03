@@ -7,7 +7,10 @@ if __name__ == '__main__':
     mp.freeze_support()
     mp.set_start_method('spawn')
 
-    from kivy import platform, Logger, LOG_LEVELS
+    if sys.__stdout__ is None or sys.__stderr__ is None:
+        os.environ['KIVY_NO_CONSOLELOG'] = '1'
+
+    from kivy import platform
     from kivy.resources import resource_add_path
     from kivy.metrics import dp
     from kivy.storage.jsonstore import JsonStore
@@ -25,11 +28,6 @@ if __name__ == '__main__':
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
-
-    if sys.__stdout__ is None or sys.__stderr__ is None:
-        os.environ['KIVY_NO_CONSOLELOG'] = '1'
-        Logger.handlers = []
-        Logger.setLevel(LOG_LEVELS["critical"])
 
     class CustomThemeManager(ThemeManager):
         def __init__(self, **kwargs):
