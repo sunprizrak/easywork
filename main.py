@@ -3,7 +3,6 @@ import os
 import sys
 
 
-
 if __name__ == '__main__':
     mp.freeze_support()
     mp.set_start_method('spawn')
@@ -25,6 +24,7 @@ if __name__ == '__main__':
         from win32com.shell import shell, shellcon
 
     if hasattr(sys, '_MEIPASS'):
+        os.environ['KIVY_NO_CONSOLELOG'] = '1'
         resource_add_path(os.path.join(sys._MEIPASS))
 
 
