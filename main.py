@@ -18,14 +18,17 @@ if __name__ == '__main__':
     from kivymd.uix.dialog import MDDialog
     from kivymd.uix.label import MDLabel
     from kivymd.uix.snackbar import MDSnackbar
-    from kivy import platform
+    from kivy import platform, Logger, LOG_LEVELS
+    import logging
 
     if platform == 'win':
         from win32com.shell import shell, shellcon
 
     if hasattr(sys, '_MEIPASS'):
-        os.environ['KIVY_NO_CONSOLELOG'] = '1'
         resource_add_path(os.path.join(sys._MEIPASS))
+        logging.basicConfig(level=logging.CRITICAL, filename='easywork.log', filemode='w')
+        Logger.handlers = []
+        Logger.setLevel(LOG_LEVELS["critical"])
 
 
     class CustomThemeManager(ThemeManager):
