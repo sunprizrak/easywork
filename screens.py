@@ -117,8 +117,10 @@ class MainScreen(BaseScreen):
             self.ids.main_spin.active = False
 
     def push(self, button):
-        sheet_name = self.app.storage.get('google_sheet_name').get('name')
-        if all([self.app.storage.exists('google_sheet'), sheet_name]):
+        if all([self.app.storage.exists('google_sheet'), self.app.storage.exists('google_sheet_name')]):
+            sheet_name = self.app.storage.get('google_sheet_name').get('name')
+            if len(sheet_name) < 1:
+                return self.open_settings()
             setattr(self, 'google_sheet', GoogleSheet(key=self.app.storage.get('google_sheet').get('api_key')))
 
             @mainthread
