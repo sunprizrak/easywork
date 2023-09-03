@@ -78,10 +78,3 @@ class GoogleSheet:
             if len(data_table) > 1:
                 time.sleep(len(data_table) + 3)
         print(self.count)
-
-
-if __name__ == '__main__':
-    gs = GoogleSheet(key='gs_credentials.json')
-    gs.auth()
-    gs.open('Vladimir_Ocr')
-
