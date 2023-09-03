@@ -23,7 +23,7 @@ if __name__ == '__main__':
     if platform == 'win':
         from win32com.shell import shell, shellcon
 
-    if hasattr(sys, '_MEIPASS'):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
         Logger.handlers = []
         Logger.setLevel(LOG_LEVELS["critical"])
