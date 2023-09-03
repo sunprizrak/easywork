@@ -1,6 +1,5 @@
 import datetime
 import os
-from time import time
 from paddleocr import PaddleOCR
 import re
 
@@ -88,12 +87,3 @@ class Ocr:
 
     def __call__(self, path: str):
         return self.main(file_path=path)
-
-
-if __name__ == '__main__':
-    test_path = '/home/sunprizrak/Изображения/vladimir'
-    start = time()
-    ocr = Ocr()
-    ocr(test_path)
-    print(f"Время затраченное на работу: {time() - start}")
-
