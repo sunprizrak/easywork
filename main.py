@@ -1,13 +1,13 @@
 import multiprocessing as mp
-import os
-import sys
 
+from kivy import platform
 
 if __name__ == '__main__':
     mp.freeze_support()
-    mp.set_start_method('spawn')
 
-    from kivy.resources import resource_add_path
+    import os
+    import sys
+    from kivy.resources import resource_add_path, resource_find
     from kivy.metrics import dp
     from kivy.storage.jsonstore import JsonStore
     from kivymd.app import MDApp
@@ -18,12 +18,11 @@ if __name__ == '__main__':
     from kivymd.uix.dialog import MDDialog
     from kivymd.uix.label import MDLabel
     from kivymd.uix.snackbar import MDSnackbar
-    from kivy import platform
 
     if platform == 'win':
         from win32com.shell import shell, shellcon
 
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
 
 
@@ -41,10 +40,10 @@ if __name__ == '__main__':
 
 
     class MainApp(MDApp):
+
         def __init__(self, **kwargs):
             super(MainApp, self).__init__(**kwargs)
             self.title = 'EasyWork'
-            self.pool = None
             self.theme_cls = CustomThemeManager()
 
             if platform == 'win':
