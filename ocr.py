@@ -37,7 +37,10 @@ class Ocr:
             elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.,]\d*', el.lower().replace(' ', '')):
                 for symbl in [':', ';']:
                     if symbl in el:
-                        res[i] = ''.join([ex for ex in el.split(symbl)[-1].split('.')[0] if ex.isdigit()]).strip()
+                        if '.' in el:
+                            res[i] = ''.join([ex for ex in el.split(symbl)[-1].split('.')[0] if ex.isdigit()]).strip()
+                        elif ',' in el:
+                            res[i] = ''.join([ex for ex in el.split(symbl)[-1].split(',')[0] if ex.isdigit()]).strip()
                         res = res[i-1:]  # cut profile and x if there
                         break
 
