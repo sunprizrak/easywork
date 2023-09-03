@@ -1,13 +1,14 @@
 import multiprocessing as mp
+import os
+import sys
 
-from kivy import platform
+
 
 if __name__ == '__main__':
     mp.freeze_support()
+    mp.set_start_method('spawn')
 
-    import os
-    import sys
-    from kivy.resources import resource_add_path, resource_find
+    from kivy.resources import resource_add_path
     from kivy.metrics import dp
     from kivy.storage.jsonstore import JsonStore
     from kivymd.app import MDApp
@@ -18,6 +19,7 @@ if __name__ == '__main__':
     from kivymd.uix.dialog import MDDialog
     from kivymd.uix.label import MDLabel
     from kivymd.uix.snackbar import MDSnackbar
+    from kivy import platform
 
     if platform == 'win':
         from win32com.shell import shell, shellcon
