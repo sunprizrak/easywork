@@ -95,7 +95,7 @@ class MainScreen(BaseScreen):
                 self.ids.main_spin.active = True
             elif os.path.isdir(self.path):
                 format_list = ['png', 'jpeg', 'jpg', 'bmp']
-                file_name_list = [file_name for file_name in os.listdir(path=self.path) if os.path.isfile(os.path.join(self.path, file_name) and file_name.split('.')[-1] in format_list)]
+                file_name_list = [file_name for file_name in os.listdir(path=self.path) if os.path.isfile(os.path.join(self.path, file_name)) and file_name.split('.')[-1] in format_list]
 
                 for i, file_name in enumerate(file_name_list):
                     path = os.path.join(self.path, file_name)
