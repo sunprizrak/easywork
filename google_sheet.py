@@ -3,7 +3,7 @@ import time
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from gspread.utils import rowcol_to_a1, ValueInputOption, DateTimeOption
+from gspread.utils import rowcol_to_a1, ValueInputOption
 
 
 class GoogleSheet:
