@@ -75,7 +75,7 @@ class Ocr:
         res.insert(0, getattr(self, 'path'))
 
         now = datetime.datetime.now()
-        date = now.strftime("%d/%m")
+        date = now.strftime('%d/%m')
         res.append(date)
         return res
 

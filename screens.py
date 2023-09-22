@@ -126,6 +126,7 @@ class MainScreen(BaseScreen):
             @mainthread
             def _error_callback(response):
                 self.press_progress()
+                self.ids.main_spin.active = False
                 print(response)
                 print(response.args)
 

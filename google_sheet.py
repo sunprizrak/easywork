@@ -3,7 +3,7 @@ import time
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from gspread.utils import rowcol_to_a1
+from gspread.utils import rowcol_to_a1, ValueInputOption, DateTimeOption
 
 
 class GoogleSheet:
@@ -66,9 +66,9 @@ class GoogleSheet:
                                 self.count += 1
 
                                 for i, cell in enumerate(cell_list):
-                                    cell.value = int(val[4:][i]) if '/' not in val[4:][i] else val[4:][i]
+                                    cell.value = val[4:][i]
 
-                                worksheet.update_cells(cell_list)
+                                worksheet.update_cells(cell_list, value_input_option=ValueInputOption.user_entered)
                                 self.count += 1
                                 print(f'update: {worksheet}')
             except Exception as error:
@@ -76,5 +76,5 @@ class GoogleSheet:
                 print(worksheet)
 
             if len(data_table) > 1:
-                time.sleep(len(data_table) + 3)
+                time.sleep(len(data_table) * 2)
         print(self.count)
