@@ -32,7 +32,11 @@ class Ocr:
                 for symbl in [':', ';', '：']:
                     if symbl in el:
                         res[i] = el.split(symbl)[-1].strip()
-                        res = res[i-1:]  # cut profile and x if there
+
+                        if i == 0:
+                            res.insert(0, 'Unknown')
+                        else:
+                            res = res[i-1:]  # cut profile and x if there
                         break
             elif re.fullmatch('.{,2}[:;]\s{0,}\d*[a-z]{,3}[.,]\d*', el.lower().replace(' ', '')):
                 for symbl in [':', ';']:
